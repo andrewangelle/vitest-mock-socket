@@ -22,6 +22,9 @@ devDependencies:
   '@vitest/coverage-v8':
     specifier: ^3.0.6
     version: 3.0.6(vitest@3.0.6)
+  '@vitest/expect':
+    specifier: ^3.0.6
+    version: 3.0.6
   husky:
     specifier: ^9.1.7
     version: 9.1.7
