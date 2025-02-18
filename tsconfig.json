@@ -1,9 +1,16 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "moduleResolution": "nodenext",
-    "module": "NodeNext",
-    "target": "ESNext",
+    "types": ["vitest/globals"],
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"],
+    "strict": true,
+    "esModuleInterop": true,
+    "ignoreDeprecations": "5.0",
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]

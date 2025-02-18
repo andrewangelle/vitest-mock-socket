@@ -1,19 +1,48 @@
 {
-  "name": "ts-template-node",
+  "name": "vitest-mock-socket",
   "version": "1.0.0",
-  "description": "",
+  "description": "Mock and assert websocket interactions with Vitest",
   "keywords": [],
   "author": "andrewangelle@gmail.com",
   "license": "MIT",
-  "main": "index.ts",
-  "type": "module",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "start": "node --experimental-strip-types ./src/index.ts",
-    "lint:fix": "pnpm exec biome check . --write",
-    "lint:check": "pnpm exec biome check .",
-    "format": "pnpm exec biome format . --write",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "build": "tsup",
+    "lint:fix": "npx biome check . --write",
+    "lint:check": "npx biome check .",
+    "format": "npx biome format . --write",
     "pre-commit": "lint-staged",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepublishOnly": "npm run build",
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.2",
+    "@vitest/coverage-v8": "^3.0.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.2",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.6"
+  },
+  "dependencies": {
+    "@vitest/utils": "^3.0.6",
+    "mock-socket": "^9.3.1"
+  },
+  "peerDependencies": {
+    "vitest": ">=2"
   },
   "husky": {
     "hooks": {
@@ -22,13 +51,6 @@
   },
   "lint-staged": {
     "*": ["pnpm lint:fix", "pnpm format"]
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.10.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
-    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=22.0.0"

@@ -21,7 +21,8 @@
     "enabled": true,
     "rules": {
       "recommended": true
-    }
+    },
+    "ignore": ["./src/with-resolvers-polyfill.ts"]
   },
   "javascript": {
     "formatter": {

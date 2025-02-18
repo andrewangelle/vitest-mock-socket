@@ -1,7 +1,9 @@
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import './with-resolvers-polyfill';
+import './extend-expect';
 
-const filePath = join(process.cwd(), './src/example.json');
-const file = await readFile(filePath, 'utf-8');
+import { WebSocketServer } from './websocket';
 
-console.log(JSON.parse(file));
+export * from './types';
+
+export default WebSocketServer;
+export { WebSocketServer };
