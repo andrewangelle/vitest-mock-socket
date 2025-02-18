@@ -1,0 +1,36 @@
+{
+  "name": "ts-template-node",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "andrewangelle@gmail.com",
+  "license": "MIT",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-strip-types ./src/index.ts",
+    "lint:fix": "pnpm exec biome check . --write",
+    "lint:check": "pnpm exec biome check .",
+    "format": "pnpm exec biome format . --write",
+    "pre-commit": "lint-staged",
+    "prepare": "husky"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*": ["pnpm lint:fix", "pnpm format"]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
