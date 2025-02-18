@@ -15,16 +15,18 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "prebuild": "npm run clean",
+    "prebuild": "pnpm clean",
     "build": "tsup",
     "lint:fix": "npx biome check . --write",
     "lint:check": "npx biome check .",
     "format": "npx biome format . --write",
     "pre-commit": "lint-staged",
     "prepare": "husky",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "pnpm build",
     "test": "vitest --run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "ci:publish": "pnpm build && npx changeset publish",
+    "ci:version": "npx changeset version"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -39,6 +41,7 @@
     "vitest": "^3.0.6"
   },
   "dependencies": {
+    "@changesets/cli": "^2.28.0",
     "@vitest/utils": "^3.0.6",
     "mock-socket": "^9.3.1"
   },
