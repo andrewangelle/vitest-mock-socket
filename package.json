@@ -1,6 +1,6 @@
 {
   "name": "vitest-mock-socket",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mock and assert websocket interactions with Vitest",
   "keywords": [],
   "author": "andrewangelle@gmail.com",
@@ -13,7 +13,11 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist", "LICENSE.txt", "ThirdPartyNotices.txt"],
+  "files": [
+    "dist",
+    "LICENSE.txt",
+    "ThirdPartyNotices.txt"
+  ],
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "pnpm clean",
@@ -55,7 +59,10 @@
     }
   },
   "lint-staged": {
-    "*": ["pnpm lint:fix", "pnpm format"]
+    "*": [
+      "pnpm lint:fix",
+      "pnpm format"
+    ]
   },
   "engines": {
     "node": ">=22.0.0"
