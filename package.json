@@ -31,10 +31,13 @@
     "test": "vitest --run",
     "test:watch": "vitest",
     "ci:publish": "pnpm build && npx changeset publish",
-    "ci:version": "npx changeset version"
+    "ci:version": "npx changeset version",
+    "commitlint": "commitlint --edit"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@types/node": "^22.10.2",
     "@vitest/coverage-v8": "^3.0.6",
     "@vitest/expect": "^3.0.6",
