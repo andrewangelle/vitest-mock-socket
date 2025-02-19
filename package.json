@@ -13,6 +13,7 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": ["dist", "LICENSE.txt", "ThirdPartyNotices.txt"],
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "pnpm clean",
