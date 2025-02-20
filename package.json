@@ -1,6 +1,6 @@
 {
   "name": "vitest-mock-socket",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Mock and assert websocket interactions with Vitest",
   "keywords": [],
   "author": "andrewangelle@gmail.com",
