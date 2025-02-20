@@ -1,12 +1,11 @@
-# Vitest mock socket
+# vitest mock socket
 
-[![npm version](https://badge.fury.io/js/vitest-mock-socket.svg)](https://badge.fury.io/js/vitest-mock-socket)
-[![Build Status](https://github.com/andrewangelle/vitest-mock-socket/actions/workflows/ci.yml/badge.svg)](https://github.com/andrewangelle/vitest-mock-socket/actions)
-
-A set of utilities and Vitest matchers to help testing complex websocket interactions.
+A set of utilities and matchers to aid in mocking websocket servers in vitest.
 
 Built on top of [mock-socket](https://github.com/thoov/mock-socket) and a refactored implementation of [vitest-websocket-mock](https://github.com/akiomik/vitest-websocket-mock) and [jest-websocket-mock](https://github.com/romgain/jest-websocket-mock)
 
+[![npm version](https://badge.fury.io/js/vitest-mock-socket.svg)](https://badge.fury.io/js/vitest-mock-socket)
+[![Build Status](https://github.com/andrewangelle/vitest-mock-socket/actions/workflows/ci.yml/badge.svg)](https://github.com/andrewangelle/vitest-mock-socket/actions)
 
 ## Install
 
@@ -14,69 +13,65 @@ Built on top of [mock-socket](https://github.com/thoov/mock-socket) and a refact
 npm install -D vitest-mock-socket
 ``` 
 
-## Mock a websocket server
 
-### The `WebSocketServer` constructor
+## Usage
 
-`vitest-mock-socket` exposes a `WebSocketServer` class that can instantiate mock websocket
-servers that keep track of the messages they receive, and in turn
-can send messages to connected clients.
+Import and instantiate the instance
 
 ```js
 import { WebSocketServer } from 'vitest-mock-socket';
 
-// create a WebSocketServer instance, listening on port 1234 on localhost
-const server = new WebSocketServer('ws://localhost:1234');
+const server = new WebSocketServer(url);
+```
 
-// real clients can connect
-const client = new WebSocket('ws://localhost:1234');
-await server.connected(); // wait for the server to have established the connection
+Connect a client to the same url
+```js
+const client = new WebSocket(url);
+```
 
-// the mock websocket server will record all the messages it receives
+Wait for the server to connect
+```js
+await server.connected(); 
+```
+
+The server will record all messages it receives
+```js
 client.send('hello');
+```
 
-// the mock websocket server can also send messages to all connected clients
+The server can also send messages to all connected clients
+```js
 server.send('hello everyone');
+```
 
-// ...simulate an error and close the connection
+Simulate an error and close the connection
+```js
 server.error();
+```
 
-// ...or gracefully close the connection
+Gracefully close the connection
+```js
 server.close();
+```
 
-// The WebSocketServer class also has a static "clean" method to gracefully close all open connections,
-// particularly useful to reset the environment between test runs.
+The instance also has a static method to gracefully close all open connections. This is particularly useful to reset the environment between test runs.
+```js
 WebSocketServer.clean();
 ```
 
-The `WebSocketServer` constructor also accepts an optional options object as second argument:
 
-- `jsonProtocol: true` can be used to automatically serialize and deserialize JSON messages:
+### `WebSocketServer` attributes
 
-```js
-const server = new WebSocketServer(
-  'ws://localhost:1234', 
-  { jsonProtocol: true }
-);
+An instance has the following attributes:
 
-server.send({ type: 'GREETING', payload: 'hello' });
-```
+- `connected` 
+  - a Promise that resolves every time the mock server receives a new connection. The resolved value is the `WebSocket` client instance that initiated the connection.
+- `closed`
+  - a Promise that resolves every time a connection to the mock server is closed.
+- `nextMessage`
+  - a Promise that resolves every time a mock server instance receives a new message. 
 
-- The [mock-socket](https://github.com/thoov/mock-socket)'s options `verifyClient` and `selectProtocol` are directly passed-through to the mock-server's constructor.
-
-### Attributes of a `WebSocketServer` instance
-
-A `WebSocketServer` instance has the following attributes:
-
-- `connected`: a Promise that resolves every time the `WebSocketServer` instance receives a
-  new connection. The resolved value is the `WebSocket` instance that initiated
-  the connection.
-- `closed`: a Promise that resolves every time a connection to a `WebSocketServer` instance
-  is closed.
-- `nextMessage`: a Promise that resolves every time a `WebSocketServer` instance receives a
-  new message. The resolved value is either a string or deserialized json based on the options passed to the constructor.
-
-### Methods on a `WebSocketServer` instance
+### `WebSocketServer` methods
 
 - `send`: send a message to all connected clients.
 - `close`: gracefully closes all opened connections.
@@ -84,11 +79,99 @@ A `WebSocketServer` instance has the following attributes:
   opened connections.
 - `on`: attach event listeners to handle new `connection`, `message` and `close` events. The callback receives the `socket` as its only argument.
 
-## Custom vitest matchers
+
+
+### `WebSocketServer` options
+The constructor accepts an optional options object as second argument:
+
+```ts
+type WebSocketServerOptions = {
+  jsonProtocol?: boolean;
+  verifyClient?: () => boolean;
+  selectProtocol?: (protocols: string[]) => string | null;
+}
+```
+
+
+
+```js
+const server = new WebSocketServer(url, options);
+```
+
+##### jsonProtocol
+  Can be used to automatically serialize and deserialize JSON messages:
+
+  ```js
+  const server = new WebSocketServer(
+    url, 
+    { jsonProtocol: true }
+  );
+
+  server.send({ type: 'GREETING', payload: 'hello' });
+  ```
+
+
+The options supported by the [mock-socket](https://github.com/thoov/mock-socket) library are directly passed-through to the mock-server's constructor.
+
+##### verifyClient
+
+  A `verifyClient` function can be given in the options for the `vitest-mock-socket` constructor.
+
+  This can be used to test behavior for a client that connects to a WebSocket server that it is blacklisted from. For example:
+
+  **Note** : _Currently [mock-socket](https://github.com/thoov/mock-socket)'s implementation does not send any parameters to this function (unlike the real `ws` implementation)._
+
+  ```js
+  test('rejects connections that fail the verifyClient option', async () => {
+    new WebSocketServer('ws://localhost:1234', { verifyClient: () => false });
+    const errorCallback = vitest.fn();
+
+    await expect(
+      new Promise((resolve, reject) => {
+        errorCallback.mockImplementation(reject);
+        const client = new WebSocket('ws://localhost:1234');
+        client.onerror = errorCallback;
+        client.onopen = resolve;
+      })
+      // WebSocket onerror event gets called with an event of type error and not an error
+    ).rejects.toEqual(expect.objectContaining({ type: 'error' }));
+  });
+  ```
+
+##### selectProtocol
+
+  A `selectProtocol` function can be given in the options for the `vitest-mock-socket` constructor.
+  This can be used to test behaviour for a client that connects to a WebSocket server using the wrong protocol.
+
+  ```js
+  test('rejects connections that fail the selectProtocol option', async () => {
+    const selectProtocol = () => null;
+    new WebSocketServer('ws://localhost:1234', { selectProtocol });
+    const errorCallback = vitest.fn();
+
+    await expect(
+      new Promise((resolve, reject) => {
+        errorCallback.mockImplementationOnce(reject);
+        const client = new WebSocket('ws://localhost:1234', 'foo');
+        client.onerror = errorCallback;
+        client.onopen = resolve;
+      })
+    ).rejects.toEqual(
+      // WebSocket onerror event gets called with an event of type error and not an error
+      expect.objectContaining({
+        type: 'error',
+        currentTarget: expect.objectContaining({ protocol: 'foo' }),
+      })
+    );
+  });
+  ```
+
+
+## Vitest matchers
 
 `vitest-mock-socket` registers custom vitest matchers to ease running assertions on received messages:
 
-### .toReceiveMessage
+#### .toReceiveMessage
 An async matcher that waits for the next message received by the the mocked websocket server, and asserts its content. It will time out with a helpful message after 1000ms.
 
 ```js
@@ -104,7 +187,7 @@ test('the server keeps track of received messages, and yields them as they come 
 });
 ```
 
-### .toHaveReceivedMessages 
+#### .toHaveReceivedMessages 
 A synchronous matcher that checks that all the expected messages have been received by the mock websocket server.
 
 
@@ -135,7 +218,9 @@ test('the server keeps track of received messages, and yields them as they come 
 });
 ```
 
-### Send messages to multiple connected clients
+## Other examples
+
+#### Send messages to multiple connected clients
 
 ```js
 test('the mock server sends messages to connected clients', async () => {
@@ -163,85 +248,8 @@ test('the mock server sends messages to connected clients', async () => {
 });
 ```
 
-### JSON protocols support
 
-`vitest-mock-socket` automatically serializes and deserializes
-JSON messages:
-
-```js
-test('the mock server seamlessly handles JSON protocols', async () => {
-  const server = new WebSocketServer('ws://localhost:1234', { jsonProtocol: true });
-  const client = new WebSocket('ws://localhost:1234');
-
-  await server.connected();
-  client.send(`{ "type": "GREETING", "payload": "hello" }`);
-  await expect(server).toReceiveMessage({ type: 'GREETING', payload: 'hello' });
-  expect(server).toHaveReceivedMessages([{ type: 'GREETING', payload: 'hello' }]);
-
-  let message = null;
-  client.onmessage = (e) => {
-    message = e.data;
-  };
-
-  server.send({ type: 'CHITCHAT', payload: 'Nice weather today' });
-  expect(message).toEqual(`{"type":"CHITCHAT","payload":"Nice weather today"}`);
-});
-```
-
-### verifyClient server option
-
-A `verifyClient` function can be given in the options for the `vitest-mock-socket` constructor.
-
-This can be used to test behavior for a client that connects to a WebSocket server that it is blacklisted from. For example:
-
-**Note** : _Currently [mock-socket](https://github.com/thoov/mock-socket)'s implementation does not send any parameters to this function (unlike the real `ws` implementation)._
-
-```js
-test('rejects connections that fail the verifyClient option', async () => {
-  new WebSocketServer('ws://localhost:1234', { verifyClient: () => false });
-  const errorCallback = vitest.fn();
-
-  await expect(
-    new Promise((resolve, reject) => {
-      errorCallback.mockImplementation(reject);
-      const client = new WebSocket('ws://localhost:1234');
-      client.onerror = errorCallback;
-      client.onopen = resolve;
-    })
-    // WebSocket onerror event gets called with an event of type error and not an error
-  ).rejects.toEqual(expect.objectContaining({ type: 'error' }));
-});
-```
-
-### selectProtocol server option
-
-A `selectProtocol` function can be given in the options for the `vitest-mock-socket` constructor.
-This can be used to test behaviour for a client that connects to a WebSocket server using the wrong protocol.
-
-```js
-test('rejects connections that fail the selectProtocol option', async () => {
-  const selectProtocol = () => null;
-  new WebSocketServer('ws://localhost:1234', { selectProtocol });
-  const errorCallback = vitest.fn();
-
-  await expect(
-    new Promise((resolve, reject) => {
-      errorCallback.mockImplementationOnce(reject);
-      const client = new WebSocket('ws://localhost:1234', 'foo');
-      client.onerror = errorCallback;
-      client.onopen = resolve;
-    })
-  ).rejects.toEqual(
-    // WebSocket onerror event gets called with an event of type error and not an error
-    expect.objectContaining({
-      type: 'error',
-      currentTarget: expect.objectContaining({ protocol: 'foo' }),
-    })
-  );
-});
-```
-
-### Sending errors
+#### Sending errors
 
 ```js
 test('the mock server sends errors to connected clients', async () => {
@@ -265,8 +273,6 @@ test('the mock server sends errors to connected clients', async () => {
   expect(error.type).toBe('error');
 });
 ```
-
-### Add custom event listeners
 
 #### Refuse connections example:
 
