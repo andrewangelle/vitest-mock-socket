@@ -39,6 +39,16 @@ describe('.toReceiveMessage', () => {
     await expect(jsonServer).toReceiveMessage({ answer: 42 });
   });
 
+  it('passes with JSON protocol on, but message is not JSON', async () => {
+    const jsonServer = new WebSocketServer('ws://localhost:9876', {
+      jsonProtocol: true,
+    });
+    const jsonClient = new WebSocket('ws://localhost:9876');
+    await jsonServer.connected();
+    jsonClient.send('not json');
+    await expect(jsonServer).toReceiveMessage('not json');
+  });
+
   it('fails when called with an expected argument that is not a valid WS', async () => {
     expect.hasAssertions();
     await expect(
