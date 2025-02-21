@@ -79,7 +79,12 @@ export class WebSocketServer {
 
   #deserializer(serializedMessage: string): DeserializedMessage {
     if (this.#options.jsonProtocol) {
-      return JSON.parse(serializedMessage);
+      try {
+        const safeParsed = JSON.parse(serializedMessage);
+        return safeParsed;
+      } catch {
+        // silently swallow JSON parse error
+      }
     }
     return serializedMessage;
   }
