@@ -1,13 +1,13 @@
 import type { MatcherState } from '@vitest/expect';
+import { diff } from '@vitest/utils/diff';
 import { expect } from 'vitest';
 
 import type { DeserializedMessage, ReceiveMessageOptions } from './types';
 import {
+  createFmt,
   getInvalidServerResult,
   getNextMessageOrTimeout,
   getTimedOutResult,
-  getToHaveReceivedMessagesStrings,
-  getToReceiveMessageStrings,
   isTimeout,
 } from './utils';
 import { WebSocketServer } from './websocket';
@@ -63,21 +63,30 @@ expect.extend({
       ? equalities.some(Boolean)
       : equalities.every(Boolean);
 
-    const strings = getToHaveReceivedMessagesStrings.call(
-      this,
-      received.messages,
-      expected,
-    );
-
     return {
       actual: received.messages,
       expected,
       pass,
       message: () => {
+        const printCli = createFmt.call(this, 'toHaveReceivedMessages');
+
         if (this.isNot) {
-          return strings.printNotToHave();
+          return printCli`
+            Expected the WebSocketServer to not have received the following messages: 
+              ${this.utils.printExpected(expected)}
+            
+            But it received: 
+              ${this.utils.printReceived(received.messages)}
+          `;
         }
-        return strings.printToHave();
+
+        return printCli`
+          Expected the WebSocketServer to have received the following messages: 
+            ${this.utils.printExpected(expected)}
+
+          Received: 
+            ${this.utils.printReceived(received.messages)}
+        `;
       },
     };
   },
@@ -101,6 +110,8 @@ expect.extend({
     expected: DeserializedMessage,
     options?: ReceiveMessageOptions,
   ) {
+    const printCli = createFmt.call(this, 'toReceiveMessage');
+
     if (!(received instanceof WebSocketServer)) {
       return getInvalidServerResult.call(this, 'toReceiveMessage', received);
     }
@@ -112,17 +123,32 @@ expect.extend({
     }
 
     const pass = this.equals(result, expected);
-    const strings = getToReceiveMessageStrings.call(this, result, expected);
+
     return {
       actual: result,
       expected,
       pass,
       message: () => {
         if (pass) {
-          return strings.printNotToEqualFailed();
+          return printCli`
+            Expected the next received message to not equal:
+              ${this.utils.printExpected(expected)}
+
+            Received:
+              ${this.utils.printReceived(result)}
+          `;
         }
 
-        return strings.printToEqualFailed();
+        return printCli`
+          Expected the next received message to equal:
+            ${this.utils.printExpected(expected)}
+
+          Received:
+            ${this.utils.printReceived(result)}
+
+          Difference:
+            ${diff(expected, result, { expand: this.expand }) ?? ''}
+        `;
       },
     };
   },
