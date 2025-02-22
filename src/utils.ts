@@ -1,5 +1,4 @@
 import type { ExpectationResult, MatcherState } from '@vitest/expect/dist';
-import { diff } from '@vitest/utils/diff';
 
 import type { DeserializedMessage, ReceiveMessageOptions } from './types';
 import type { WebSocketServer } from './websocket';
@@ -35,62 +34,34 @@ export function getInvalidServerResult(
 /**
  * toHaveReceivedMessages utils
  */
-export function getToHaveReceivedMessagesStrings(
-  this: MatcherState,
-  received: DeserializedMessage[],
-  expected: DeserializedMessage[],
-) {
-  const matcherHint = getMatcherHint.call(this, 'toHaveReceivedMessages');
-  return {
-    toHave: {
-      expected: `Expected the WebSocketServer to have received the following messages:\n  ${this.utils.printExpected(expected)}\n`,
-      receivedMsg: `Received:\n  ${this.utils.printReceived(received)}\n\n`,
-    },
-    notToHave: {
-      expected: `Expected the WebSocketServer to not have received the following messages:\n  ${this.utils.printExpected(expected)}\n`,
-      receivedMsg: `But it received:\n  ${this.utils.printReceived(received)}`,
-    },
-    printToHave() {
-      const { expected, receivedMsg } = this.toHave;
-      return `${matcherHint}\n\n${expected}${receivedMsg}`;
-    },
-    printNotToHave() {
-      const { expected, receivedMsg } = this.notToHave;
-      return `${matcherHint}\n\n${expected}${receivedMsg}`;
-    },
+
+export function createFmt(this: MatcherState, name: string) {
+  const matcherHint = getMatcherHint.call(this, name);
+
+  return (templates: TemplateStringsArray, ...values: string[]) => {
+    let result = '';
+
+    for (const template of templates.filter(Boolean)) {
+      const idx = templates.indexOf(template);
+      const lineBreak = '\n';
+      const indentedOutput = values[idx]
+        ?.split(lineBreak)
+        .filter(Boolean)
+        .map((line) => `  ${line}`)
+        .join(lineBreak);
+
+      result += `${template.trim()}\n\n${indentedOutput}\n\n`;
+    }
+
+    const [formatted] = result.split(/(\n+undefined+\n)/);
+
+    return `${matcherHint}\n\n${formatted}\n`;
   };
 }
 
 /**
  * toReceiveMessage utils
  */
-export function getToReceiveMessageStrings(
-  this: MatcherState,
-  received: DeserializedMessage,
-  expected: DeserializedMessage,
-) {
-  const matcherHint = getMatcherHint.call(this, 'toReceiveMessage');
-  return {
-    toEqual: {
-      expected: `Expected the next received message to equal:\n  ${this.utils.printExpected(expected)}\n`,
-      received: `Received:\n  ${this.utils.printReceived(received)}\n\n`,
-      diff: `Difference:\n\n${diff(expected, received, { expand: this.expand })}`,
-    },
-    notToEqual: {
-      expected: `Expected the next received message to not equal:\n  ${this.utils.printExpected(expected)}\n`,
-      received: `Received:\n  ${this.utils.printReceived(received)}`,
-    },
-    printToEqualFailed() {
-      const { expected, received, diff } = this.toEqual;
-      return `${matcherHint}\n\n${expected}${received}${diff}`;
-    },
-    printNotToEqualFailed() {
-      const { expected, received } = this.notToEqual;
-      return `${matcherHint}\n\n${expected}${received}`;
-    },
-  };
-}
-
 const WAIT_DELAY = 1000;
 const TIMEOUT = Symbol('timeout');
 
