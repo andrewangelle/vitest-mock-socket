@@ -4,7 +4,7 @@ A set of utilities and matchers to aid in mocking websocket servers in vitest.
 
 Built on top of [mock-socket](https://github.com/thoov/mock-socket) and a refactored implementation of [vitest-websocket-mock](https://github.com/akiomik/vitest-websocket-mock) and [jest-websocket-mock](https://github.com/romgain/jest-websocket-mock)
 
-[![npm version](https://badge.fury.io/js/vitest-mock-socket.svg)](https://badge.fury.io/js/vitest-mock-socket)
+[![npm version](https://badge.fury.io/js/vitest-mock-socket.svg)](https://badge.fury.io/js/vitest-mock-socket)<br />
 [![Build Status](https://github.com/andrewangelle/vitest-mock-socket/actions/workflows/ci.yml/badge.svg)](https://github.com/andrewangelle/vitest-mock-socket/actions)
 
 ## Install
@@ -59,29 +59,27 @@ The instance also has a static method to gracefully close all open connections. 
 WebSocketServer.clean();
 ```
 
+### `WebSocketServer` constructor
 
-### `WebSocketServer` attributes
-
-An instance has the following attributes:
-
+#### Methods
 - `connected` 
-  - a Promise that resolves every time the mock server receives a new connection. The resolved value is the `WebSocket` client instance that initiated the connection.
+  - a Promise that resolves every time the mock server receives a new connection. The resolved value is the [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) client instance that initiated the connection.
 - `closed`
   - a Promise that resolves every time a connection to the mock server is closed.
 - `nextMessage`
   - a Promise that resolves every time a mock server instance receives a new message. 
+- `send`
+  - send a message to all connected clients.
+- `close`
+  - gracefully closes all opened connections.
+- `error`
+  - sends an error message to all connected clients and closes all opened connections.
+- `on`
+  - attach event listeners to handle new `connection`, `message` and `close` events. The callback receives the `socket` as its only argument.
 
-### `WebSocketServer` methods
-
-- `send`: send a message to all connected clients.
-- `close`: gracefully closes all opened connections.
-- `error`: sends an error message to all connected clients and closes all
-  opened connections.
-- `on`: attach event listeners to handle new `connection`, `message` and `close` events. The callback receives the `socket` as its only argument.
 
 
-
-### `WebSocketServer` options
+#### Options
 The constructor accepts an optional options object as second argument:
 
 ```ts
@@ -91,8 +89,6 @@ type WebSocketServerOptions = {
   selectProtocol?: (protocols: string[]) => string | null;
 }
 ```
-
-
 
 ```js
 const server = new WebSocketServer(url, options);
@@ -169,7 +165,7 @@ The options supported by the [mock-socket](https://github.com/thoov/mock-socket)
 
 ## Vitest matchers
 
-`vitest-mock-socket` registers custom vitest matchers to ease running assertions on received messages:
+Custom vitest matchers are included to ease running assertions on received messages:
 
 #### .toReceiveMessage
 An async matcher that waits for the next message received by the the mocked websocket server, and asserts its content. It will time out with a helpful message after 1000ms.
@@ -354,8 +350,7 @@ export { WebSocket as default } from 'mock-socket';
 - Somewhere in the test files, call `vi.mock` with the name of the library you want to mock. For instance, for the [ws](https://github.com/websockets/ws) library:
 
 ```js
-// foo.test.js
-
+// example.test.js
 import WebSocket from 'ws';
 import { vi } from 'vitest';
 
