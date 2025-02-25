@@ -45,7 +45,7 @@ describe('.toHaveReceivedMessages', () => {
     ]);
   });
 
-  it('passes when the websocket server received the mixed messages types', async () => {
+  it('passes when the websocket server received mixed message types', async () => {
     const jsonServer = new WebSocketServer('ws://localhost:9876', {
       jsonProtocol: true,
     });
@@ -64,7 +64,6 @@ describe('.toHaveReceivedMessages', () => {
     ]);
   });
 
-  // TODO: Fix Array indentation
   it('fails when the websocket server did not receive the expected messages', async () => {
     client.send('hello there');
     client.send('how are you?');

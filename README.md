@@ -186,6 +186,7 @@ test('the server keeps track of received messages, and yields them as they come 
 #### .toHaveReceivedMessages 
 A synchronous matcher that checks that all the expected messages have been received by the mock websocket server.
 
+**Note:** Since this matcher is synchronous, you must call `.nextMessage` for each message sent before asserting with this matcher
 
 ```js
 test('the server keeps track of received messages, and yields them as they come in', async () => {
@@ -196,8 +197,9 @@ test('the server keeps track of received messages, and yields them as they come 
 
   client.send('hello');
   client.send('goodbye');
+  await server.nextMessage();
+  await server.nextMessage();
 
-  
   expect(server).toHaveReceivedMessages(['hello', 'goodbye']);
 });
 ```

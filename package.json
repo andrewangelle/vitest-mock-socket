@@ -2,11 +2,17 @@
   "name": "vitest-mock-socket",
   "version": "1.0.3",
   "description": "Mock and assert websocket interactions with Vitest",
-  "keywords": [],
+  "keywords": ["vitest", "websocket", "websockets", "mock-socket", "vitest-mock-socket", "test"],
   "author": "andrewangelle@gmail.com",
   "license": "MIT",
   "types": "dist/index.d.mts",
   "module": "dist/index.mjs",
+  "repository": "https://github.com/andrewangelle/vitest-mock-socket.git",
+  "homepage": "https://github.com/andrewangelle/vitest-mock-socket#readme",
+  "bugs": {
+    "url": "https://github.com/andrewangelle/vitest-mock-socket/issues",
+    "email": "example@npmjs.com"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
