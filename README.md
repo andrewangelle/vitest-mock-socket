@@ -186,7 +186,7 @@ test('the server keeps track of received messages, and yields them as they come 
 #### .toHaveReceivedMessages 
 A synchronous matcher that checks that all the expected messages have been received by the mock websocket server.
 
-**Note:** Since this matcher is synchronous, you must call `.nextMessage` for each message sent before asserting with this matcher
+**Note:** Since this matcher is synchronous, you must call `.nextMessage` for each message sent before asserting with this matcher. You can get the same behavior without the need to manually call `.nextMessage` by using the asynchronous variant `toHaveResolvedMessages`
 
 ```js
 test('the server keeps track of received messages, and yields them as they come in', async () => {
@@ -213,6 +213,54 @@ test('the server keeps track of received messages, and yields them as they come 
   client.send('hello');
   await expect(server).toReceiveMessage('hello');
   expect(server).toHaveReceivedMessages(['hello']);
+});
+```
+
+#### .toHaveResolvedMessages 
+A asynchronous version of `toHaveReceivedMessages`.
+
+Default behavior is to exact matching.
+```js
+test('the server keeps track of received messages, and yields them as they come in', async () => {
+  const server = new WebSocketServer('ws://localhost:1234');
+  const client = new WebSocket('ws://localhost:1234');
+
+  await server.connected();
+
+  client.send('hello');
+  client.send('goodbye');
+
+  await expect(server).toHaveResolvedMessages(['hello', 'goodbye']);
+});
+```
+
+Allows for partial matches.
+```js
+test('the server keeps track of received messages, and yields them as they come in.', async () => {
+  const server = new WebSocketServer('ws://localhost:1234');
+  const client = new WebSocket('ws://localhost:1234');
+
+  await server.connected();
+
+  client.send('hello');
+  client.send('goodbye');
+
+  await expect(server).toHaveResolvedMessages(['hello']);
+});
+```
+
+This would fail
+```js
+test('the server keeps track of received messages, and yields them as they come in.', async () => {
+  const server = new WebSocketServer('ws://localhost:1234');
+  const client = new WebSocket('ws://localhost:1234');
+
+  await server.connected();
+
+  client.send('hello');
+  client.send('goodbye');
+
+  await expect(server).toHaveResolvedMessages(['hello', 'how are you?', 'goodbye']);
 });
 ```
 

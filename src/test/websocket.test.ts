@@ -1,6 +1,6 @@
 import { WebSocketServer } from '../websocket';
 
-describe('The WSS helper', () => {
+describe('WebSocketServer', () => {
   afterEach(() => {
     WebSocketServer.clean();
   });
