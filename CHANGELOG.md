@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 1.0.4
+
+### Patch Changes
+
+- 15c6a15: Update docs, add repo details to package.json
+
 ## 1.0.3
 
 ### Patch Changes
