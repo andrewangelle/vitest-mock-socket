@@ -4,5 +4,5 @@
   "initialVersions": {
     "vitest-mock-socket": "1.0.4"
   },
-  "changesets": []
+  "changesets": ["kind-rats-cover"]
 }
