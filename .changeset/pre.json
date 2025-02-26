@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "vitest-mock-socket": "1.0.4"
+  },
+  "changesets": []
+}
