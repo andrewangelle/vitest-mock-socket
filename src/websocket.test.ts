@@ -1,4 +1,4 @@
-import { WebSocketServer } from '../websocket';
+import { WebSocketServer } from './websocket';
 
 describe('WebSocketServer', () => {
   afterEach(() => {
