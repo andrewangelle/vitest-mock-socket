@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- ea062a0: Implement toHaveResolvedMessages matcher
+
 ## 1.0.4
 
 ### Patch Changes
