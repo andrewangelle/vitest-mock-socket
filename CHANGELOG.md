@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 1.1.0-next.1
+
+### Minor Changes
+
+- d6b84f1: Reset connected and closed promises after resolving
+
 ## 1.1.0-next.0
 
 ### Minor Changes
