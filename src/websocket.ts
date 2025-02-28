@@ -92,10 +92,14 @@ export class WebSocketServer {
   #createServer(url: string) {
     const server = new Server(url, this.#options);
 
-    server.on('close', this.#isClosed.resolve);
+    server.on('close', (socket: Client) => {
+      this.#isClosed.resolve(socket);
+      this.#isClosed = Promise.withResolvers();
+    });
 
     server.on('connection', (socket: Client) => {
       this.#isConnected.resolve(socket);
+      this.#isConnected = Promise.withResolvers();
 
       socket.on('message', (message) => {
         const parsedMessage = this.#deserializer(message as string);
