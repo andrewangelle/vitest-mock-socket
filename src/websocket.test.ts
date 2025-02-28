@@ -1,13 +1,15 @@
 import { WebSocketServer } from './websocket';
 
+const mockUrl = 'ws://localhost:1234';
+
 describe('WebSocketServer', () => {
   afterEach(() => {
     WebSocketServer.clean();
   });
 
   it('keeps track of received messages, and yields them as they come in', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
 
     await server.connected();
     client.send('hello');
@@ -17,10 +19,10 @@ describe('WebSocketServer', () => {
   });
 
   it("cleans up connected clients and messages on 'clean'", async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client1 = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client1 = new WebSocket(mockUrl);
     await server.connected();
-    const client2 = new WebSocket('ws://localhost:1234');
+    const client2 = new WebSocket(mockUrl);
     await server.connected();
 
     const connections = { client1: true, client2: true };
@@ -44,8 +46,8 @@ describe('WebSocketServer', () => {
 
   it('handles messages received in a quick succession', async () => {
     expect.hasAssertions();
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
     await server.connected();
 
     'abcdef'.split('').forEach(client.send.bind(client));
@@ -72,25 +74,29 @@ describe('WebSocketServer', () => {
   });
 
   it('sends messages to connected clients', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client1 = new WebSocket('ws://localhost:1234');
-    await server.connected();
-    const client2 = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+
+    const client1 = new WebSocket(mockUrl);
     await server.connected();
 
-    interface Messages {
-      client1: Array<string>;
-      client2: Array<string>;
-    }
-    const messages: Messages = { client1: [], client2: [] };
+    const client2 = new WebSocket(mockUrl);
+    await server.connected();
+
+    const messages: Record<'client1' | 'client2', string[]> = {
+      client1: [],
+      client2: [],
+    };
+
     client1.onmessage = (e) => {
       messages.client1.push(e.data);
     };
+
     client2.onmessage = (e) => {
       messages.client2.push(e.data);
     };
 
     server.send('hello everyone');
+
     expect(messages).toEqual({
       client1: ['hello everyone'],
       client2: ['hello everyone'],
@@ -98,37 +104,43 @@ describe('WebSocketServer', () => {
   });
 
   it('seamlessly handles JSON protocols', async () => {
-    const server = new WebSocketServer('ws://localhost:1234', {
+    const server = new WebSocketServer(mockUrl, {
       jsonProtocol: true,
     });
-    const client = new WebSocket('ws://localhost:1234');
-
+    const client = new WebSocket(mockUrl);
     await server.connected();
-    client.send(`{ "type": "GREETING", "payload": "hello" }`);
+
+    const testMessages = {
+      greeting: { type: 'GREETING', payload: 'hello' },
+      chitchat: { type: 'CHITCHAT', payload: 'Nice weather today' },
+    };
+
+    client.send(JSON.stringify(testMessages.greeting));
+
     const received = await server.nextMessage();
-    expect(server.messages).toEqual([{ type: 'GREETING', payload: 'hello' }]);
-    expect(received).toEqual({ type: 'GREETING', payload: 'hello' });
+    expect(server.messages).toEqual([testMessages.greeting]);
+    expect(received).toEqual(testMessages.greeting);
 
     let message = null;
+
     client.onmessage = (e) => {
       message = e.data;
     };
 
-    server.send({ type: 'CHITCHAT', payload: 'Nice weather today' });
-    expect(message).toEqual(
-      `{"type":"CHITCHAT","payload":"Nice weather today"}`,
-    );
+    server.send(testMessages.chitchat);
+
+    expect(message).toEqual(JSON.stringify(testMessages.chitchat));
   });
 
   it('rejects connections that fail the verifyClient option', async () => {
     const verifyClient = vi.fn().mockReturnValue(false);
-    new WebSocketServer('ws://localhost:1234', { verifyClient: verifyClient });
+    new WebSocketServer(mockUrl, { verifyClient: verifyClient });
     const errorCallback = vi.fn();
 
     await expect(
       new Promise((resolve, reject) => {
         errorCallback.mockImplementation(reject);
-        const client = new WebSocket('ws://localhost:1234');
+        const client = new WebSocket(mockUrl);
         client.onerror = errorCallback;
         client.onopen = resolve;
       }),
@@ -144,13 +156,13 @@ describe('WebSocketServer', () => {
 
   it('rejects connections that fail the selectProtocol option', async () => {
     const selectProtocol = () => null;
-    new WebSocketServer('ws://localhost:1234', { selectProtocol });
+    new WebSocketServer(mockUrl, { selectProtocol });
     const errorCallback = vi.fn();
 
     await expect(
       new Promise((resolve, reject) => {
         errorCallback.mockImplementationOnce(reject);
-        const client = new WebSocket('ws://localhost:1234', 'foo');
+        const client = new WebSocket(mockUrl, 'foo');
         client.onerror = errorCallback;
         client.onopen = resolve;
       }),
@@ -167,8 +179,8 @@ describe('WebSocketServer', () => {
   });
 
   it('closes the connection', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
     const closeCallback = vi.fn();
     await server.connected();
 
@@ -193,8 +205,8 @@ describe('WebSocketServer', () => {
   });
 
   it('closes the connection with a custom close code', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
     const closeCallback = vi.fn();
     await server.connected();
     client.onclose = closeCallback;
@@ -216,12 +228,12 @@ describe('WebSocketServer', () => {
   it('can refuse connections', async () => {
     expect.assertions(6);
 
-    const server = new WebSocketServer('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
     server.on('connection', (socket) => {
       socket.close({ wasClean: false, code: 1003, reason: 'NOPE' });
     });
 
-    const client = new WebSocket('ws://localhost:1234');
+    const client = new WebSocket(mockUrl);
     client.onclose = (event: CloseEvent) => {
       expect(event.code).toBe(1003);
       expect(event.wasClean).toBe(false);
@@ -240,14 +252,14 @@ describe('WebSocketServer', () => {
   it('can send messages in the connection callback', async () => {
     expect.assertions(1);
 
-    const server = new WebSocketServer('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
     let receivedMessage = null;
 
     server.on('connection', (socket) => {
       socket.send('hello there');
     });
 
-    const client = new WebSocket('ws://localhost:1234');
+    const client = new WebSocket(mockUrl);
     client.onmessage = (event) => {
       receivedMessage = event.data;
     };
@@ -257,7 +269,7 @@ describe('WebSocketServer', () => {
   });
 
   it('provides a callback when receiving messages', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
     expect.assertions(1);
 
     server.on('connection', (socket) => {
@@ -266,15 +278,15 @@ describe('WebSocketServer', () => {
       });
     });
 
-    const client = new WebSocket('ws://localhost:1234');
+    const client = new WebSocket(mockUrl);
     await server.connected();
     client.send('client says hi');
     await server.nextMessage();
   });
 
   it('sends errors to connected clients', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
     await server.connected();
 
     // biome-ignore lint/suspicious/noExplicitAny: bad types in MockSockets
@@ -290,13 +302,13 @@ describe('WebSocketServer', () => {
     server.send('hello everyone');
     server.error();
     expect(disconnected).toBe(true);
-    expect(error.origin).toBe('ws://localhost:1234/');
+    expect(error.origin).toBe(`${mockUrl}/`);
     expect(error.type).toBe('error');
   });
 
   it('resolves the client socket that connected', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
 
     const socket = await server.connected();
 
@@ -304,8 +316,8 @@ describe('WebSocketServer', () => {
   });
 
   it('passes on close options on server error event', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(mockUrl);
+    const client = new WebSocket(mockUrl);
     const closeCallback = vi.fn();
     await server.connected();
     client.onclose = closeCallback;

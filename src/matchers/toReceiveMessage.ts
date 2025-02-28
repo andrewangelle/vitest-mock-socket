@@ -2,28 +2,15 @@ import type { MatcherState } from '@vitest/expect';
 import { diff } from '@vitest/utils/diff';
 
 import type { DeserializedMessage, ReceiveMessageOptions } from '../types';
+import { WebSocketServer } from '../websocket';
 import {
   createFmt,
   getInvalidServerResult,
   getNextMessageOrTimeout,
   getTimedOutResult,
   isTimeout,
-} from '../utils';
-import { WebSocketServer } from '../websocket';
+} from './utils';
 
-/**
- *
- * @name toReceiveMessage
- * @description
- *
- * 1. Validate that a websocket server was passed to expect.
- *    i.e. await expect(server).toReceiveMessage(...)
- *
- * 2. Wait for the message or timeout. Fail if we timeout first.
- *
- * 3. Test and print the results
- *
- */
 export async function toReceiveMessage(
   this: MatcherState,
   received: DeserializedMessage,
@@ -32,16 +19,20 @@ export async function toReceiveMessage(
 ) {
   const printCli = createFmt.call(this, 'toReceiveMessage');
 
+  // Validate that a websocket server was passed to expect.
+  // i.e. await expect(server).toReceiveMessage(...)
   if (!(received instanceof WebSocketServer)) {
     return getInvalidServerResult.call(this, 'toReceiveMessage', received);
   }
 
+  // Wait for the message or timeout. Fail if we timeout first.
   const result = await getNextMessageOrTimeout(received, options);
 
   if (isTimeout(result)) {
     return getTimedOutResult.call(this, options);
   }
 
+  // Test and print the results
   const pass = this.equals(result, expected);
 
   return {

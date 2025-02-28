@@ -1,23 +1,15 @@
 import type { MatcherState } from '@vitest/expect';
 import type { DeserializedMessage } from '../types';
-import { createFmt, getInvalidServerResult } from '../utils';
 import { WebSocketServer } from '../websocket';
+import { createFmt, getInvalidServerResult } from './utils';
 
-/**
- *
- * @name toHaveReceivedMessages
- * @description
- *
- * 1. Validate that a websocket server was passed to expect.
- *    i.e. expect(server).toHaveReceivedMessages(...)
- *
- * 2. Test and print the results
- */
 export function toHaveReceivedMessages(
   this: MatcherState,
   received: DeserializedMessage[],
   expected: DeserializedMessage[],
 ) {
+  // Validate that a websocket server was passed to expect.
+  // i.e. expect(server).toHaveResolved(...)
   if (!(received instanceof WebSocketServer)) {
     return getInvalidServerResult.call(
       this,
@@ -26,7 +18,7 @@ export function toHaveReceivedMessages(
     );
   }
 
-  // Handle option.jsonProtocol set to true
+  // handles comparison when option.jsonProtocol set to true
   const equalities = expected.map((expectedMsg) =>
     received.messages.some((receivedMsg) =>
       this.equals(receivedMsg, expectedMsg),
