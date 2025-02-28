@@ -1,11 +1,7 @@
 import type { ExpectationResult, MatcherState } from '@vitest/expect/dist';
+import type { DeserializedMessage, ReceiveMessageOptions } from '../types';
+import type { WebSocketServer } from '../websocket';
 
-import type { DeserializedMessage, ReceiveMessageOptions } from './types';
-import type { WebSocketServer } from './websocket';
-
-/**
- * Shared utils
- */
 export function getMatcherHint(this: MatcherState, name: string) {
   return this.utils.matcherHint(
     this.isNot ? `.not.${name}` : `.${name}`,
@@ -31,9 +27,21 @@ export function getInvalidServerResult(
   };
 }
 
-/**
- * toHaveReceivedMessages utils
- */
+export function getTimedOutResult(
+  this: MatcherState,
+  options?: ReceiveMessageOptions,
+) {
+  const matcherHint = getMatcherHint.call(this, 'toReceiveMessage');
+  const waitDelay = options?.timeout ?? WAIT_DELAY;
+  return {
+    pass: this.isNot, // always fail
+    message: () => {
+      const expected = 'Expected the websocket server to receive a message,\n';
+      const receivedMsg = `but it didn't receive anything in ${waitDelay}ms.`;
+      return `${matcherHint}\n\n${expected}${receivedMsg}`;
+    },
+  };
+}
 
 export function createFmt(this: MatcherState, name: string) {
   const matcherHint = getMatcherHint.call(this, name);
@@ -59,9 +67,6 @@ export function createFmt(this: MatcherState, name: string) {
   };
 }
 
-/**
- * toReceiveMessage utils
- */
 const WAIT_DELAY = 1000;
 const TIMEOUT = Symbol('timeout');
 
@@ -90,26 +95,6 @@ export async function getNextMessageOrTimeout(
     clearTimeout(timer);
   }
 }
-
-export function getTimedOutResult(
-  this: MatcherState,
-  options?: ReceiveMessageOptions,
-) {
-  const matcherHint = getMatcherHint.call(this, 'toReceiveMessage');
-  const waitDelay = options?.timeout ?? WAIT_DELAY;
-  return {
-    pass: this.isNot, // always fail
-    message: () => {
-      const expected = 'Expected the websocket server to receive a message,\n';
-      const receivedMsg = `but it didn't receive anything in ${waitDelay}ms.`;
-      return `${matcherHint}\n\n${expected}${receivedMsg}`;
-    },
-  };
-}
-
-/**
- * toHaveResolvedMessages utils
- */
 
 export async function resolveAllClientMessages(
   server: WebSocketServer,
