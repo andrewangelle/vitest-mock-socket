@@ -1,5 +1,16 @@
 # vitest-mock-socket
 
+## 2.0.0-next.2
+
+### Major Changes
+
+- 87f3262: Support JSON protocol by default.
+
+  BREAKING-CHANGE:
+
+  - Rename ReceiveMessageOptions type to MessageMatcherOptions
+  - Remove jsonProtocol option.
+
 ## 1.1.0-next.1
 
 ### Minor Changes
