@@ -4,5 +4,9 @@
   "initialVersions": {
     "vitest-mock-socket": "1.0.4"
   },
-  "changesets": ["kind-rats-cover", "three-singers-check"]
+  "changesets": [
+    "chubby-llamas-relate",
+    "kind-rats-cover",
+    "three-singers-check"
+  ]
 }
