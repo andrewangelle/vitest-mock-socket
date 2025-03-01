@@ -3,19 +3,19 @@ import { expect } from 'vitest';
 import { toHaveReceivedMessages } from './matchers/toHaveReceivedMessages';
 import { toHaveResolvedMessages } from './matchers/toHaveResolvedMessages';
 import { toReceiveMessage } from './matchers/toReceiveMessage';
-import type { DeserializedMessage, ReceiveMessageOptions } from './types';
+import type { DeserializedMessage, MessageMatcherOptions } from './types';
 
 interface CustomMatchers<MatcherResult = unknown> {
   toReceiveMessage<MessageType = object>(
     message: DeserializedMessage<MessageType>,
-    options?: ReceiveMessageOptions,
+    options?: MessageMatcherOptions,
   ): Promise<MatcherResult>;
   toHaveReceivedMessages<MessageType = object>(
     messages: DeserializedMessage<MessageType>[],
   ): MatcherResult;
   toHaveResolvedMessages<MessageType = object>(
     messages: DeserializedMessage<MessageType>[],
-    options?: ReceiveMessageOptions,
+    options?: MessageMatcherOptions,
   ): Promise<MatcherResult>;
 }
 

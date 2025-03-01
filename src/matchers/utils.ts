@@ -1,5 +1,5 @@
 import type { ExpectationResult, MatcherState } from '@vitest/expect/dist';
-import type { DeserializedMessage, ReceiveMessageOptions } from '../types';
+import type { DeserializedMessage, MessageMatcherOptions } from '../types';
 import type { WebSocketServer } from '../websocket';
 
 export function getMatcherHint(this: MatcherState, name: string) {
@@ -29,7 +29,7 @@ export function getInvalidServerResult(
 
 export function getTimedOutResult(
   this: MatcherState,
-  options?: ReceiveMessageOptions,
+  options?: MessageMatcherOptions,
 ) {
   const matcherHint = getMatcherHint.call(this, 'toReceiveMessage');
   const waitDelay = options?.timeout ?? WAIT_DELAY;
@@ -78,7 +78,7 @@ export function isTimeout(
 
 export async function getNextMessageOrTimeout(
   server: WebSocketServer,
-  options?: ReceiveMessageOptions,
+  options?: MessageMatcherOptions,
 ) {
   const waitDelay = options?.timeout ?? WAIT_DELAY;
   const timeout = Promise.withResolvers();
@@ -98,7 +98,7 @@ export async function getNextMessageOrTimeout(
 
 export async function resolveAllClientMessages(
   server: WebSocketServer,
-  options?: ReceiveMessageOptions,
+  options?: MessageMatcherOptions,
 ) {
   const finished = Promise.withResolvers<void>();
 

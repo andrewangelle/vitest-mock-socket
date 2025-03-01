@@ -36,30 +36,6 @@ Received: string
   [31m"boom"[39m]
 `;
 
-exports[`.toReceiveMessage > fails when expecting a JSON message but the server is not configured for JSON protocols 1`] = `
-[Error: [2mexpect([22m[31mWebSocketServer[39m[2m).toReceiveMessage([22m[32mexpected[39m[2m)[22m
-
-Expected the next received message to equal:
-
-  [32mObject {
-    "answer": 42,
-  }[39m
-
-Received:
-
-  [31m"{"answer":42}"[39m
-
-Difference:
-
-  [32m- Expected:[39m 
-  {
-    "answer": 42,
-  }
-  [31m+ Received:[39m 
-  "{\\"answer\\":42}"
-]
-`;
-
 exports[`.toReceiveMessage > fails when the WS server does not receive the expected message 1`] = `
 [Error: [2mexpect([22m[31mWebSocketServer[39m[2m).toReceiveMessage([22m[32mexpected[39m[2m)[22m
 

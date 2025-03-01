@@ -6,9 +6,11 @@ import { WebSocketServer } from '../websocket';
 
 let server: WebSocketServer;
 let client: WebSocket;
+const testURL = 'ws://localhost:1234';
+
 beforeEach(async () => {
-  server = new WebSocketServer('ws://localhost:1234');
-  client = new WebSocket('ws://localhost:1234');
+  server = new WebSocketServer(testURL);
+  client = new WebSocket(testURL);
 
   server.on('message', (msg) => {
     console.log(msg);
@@ -33,15 +35,10 @@ describe('.toHaveResolvedMessages', () => {
   });
 
   it('passes when the websocket server received the expected JSON messages', async () => {
-    const jsonServer = new WebSocketServer('ws://localhost:9876', {
-      jsonProtocol: true,
-    });
-    const jsonClient = new WebSocket('ws://localhost:9876');
-    await jsonServer.connected();
-    jsonClient.send(`{"type":"GREETING","payload":"hello there"}`);
-    jsonClient.send(`{"type":"GREETING","payload":"how are you?"}`);
-    jsonClient.send(`{"type":"GREETING","payload":"good?"}`);
-    await expect(jsonServer).toHaveResolvedMessages([
+    client.send(`{"type":"GREETING","payload":"hello there"}`);
+    client.send(`{"type":"GREETING","payload":"how are you?"}`);
+    client.send(`{"type":"GREETING","payload":"good?"}`);
+    await expect(server).toHaveResolvedMessages([
       { type: 'GREETING', payload: 'hello there' },
       { type: 'GREETING', payload: 'how are you?' },
       { type: 'GREETING', payload: 'good?' },
@@ -49,15 +46,10 @@ describe('.toHaveResolvedMessages', () => {
   });
 
   it('passes when the websocket server receives mixed message types', async () => {
-    const jsonServer = new WebSocketServer('ws://localhost:9876', {
-      jsonProtocol: true,
-    });
-    const jsonClient = new WebSocket('ws://localhost:9876');
-    await jsonServer.connected();
-    jsonClient.send('hello there');
-    jsonClient.send(`{"type":"GREETING","payload":"how are you?"}`);
-    jsonClient.send(`{"type":"GREETING","payload":"good?"}`);
-    await expect(jsonServer).toHaveResolvedMessages([
+    client.send('hello there');
+    client.send(`{"type":"GREETING","payload":"how are you?"}`);
+    client.send(`{"type":"GREETING","payload":"good?"}`);
+    await expect(server).toHaveResolvedMessages([
       'hello there',
       { type: 'GREETING', payload: 'how are you?' },
       { type: 'GREETING', payload: 'good?' },

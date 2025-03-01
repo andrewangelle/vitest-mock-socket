@@ -1,5 +1,5 @@
 import type { MatcherState } from '@vitest/expect';
-import type { DeserializedMessage, ReceiveMessageOptions } from '../types';
+import type { DeserializedMessage, MessageMatcherOptions } from '../types';
 import { WebSocketServer } from '../websocket';
 import {
   createFmt,
@@ -11,7 +11,7 @@ export async function toHaveResolvedMessages(
   this: MatcherState,
   received: DeserializedMessage[],
   expected: DeserializedMessage[],
-  options?: ReceiveMessageOptions,
+  options?: MessageMatcherOptions,
 ) {
   // Validate that a websocket server was passed to expect.
   // i.e. expect(server).toHaveResolved(...)

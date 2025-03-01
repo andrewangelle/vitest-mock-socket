@@ -22,10 +22,7 @@ export class WebSocketServer {
   #messageAdded = Promise.withResolvers<void>();
   #messageQueue: DeserializedMessage[] = [];
 
-  constructor(
-    url: string,
-    options: WebSocketServerOptions = { jsonProtocol: false },
-  ) {
+  constructor(url: string, options: WebSocketServerOptions = {}) {
     WebSocketServer.clients.push(this);
     this.#options = options;
     this.server = this.#createServer(url);
@@ -58,7 +55,7 @@ export class WebSocketServer {
   }
 
   send(message: DeserializedMessage) {
-    this.server.emit('message', this.#serializer(message));
+    this.server.emit('message', this.#serialize(message));
   }
 
   close(options?: CloseOptions) {
@@ -70,15 +67,22 @@ export class WebSocketServer {
     this.server.close(options);
   }
 
-  #serializer(deserializedMessage: DeserializedMessage) {
-    if (this.#options.jsonProtocol) {
-      return JSON.stringify(deserializedMessage);
+  #isValidJSON(value: string) {
+    return /^(?:\{.*\}|\[.*\])$/.test(value);
+  }
+
+  #serialize(deserializedMessage: DeserializedMessage) {
+    const stringified = JSON.stringify(deserializedMessage);
+
+    if (this.#isValidJSON(stringified)) {
+      return stringified;
     }
+
     return deserializedMessage;
   }
 
-  #deserializer(serializedMessage: string): DeserializedMessage {
-    if (this.#options.jsonProtocol) {
+  #deserialize(serializedMessage: string): DeserializedMessage {
+    if (this.#isValidJSON(serializedMessage)) {
       try {
         const safeParsed = JSON.parse(serializedMessage);
         return safeParsed;
@@ -92,17 +96,13 @@ export class WebSocketServer {
   #createServer(url: string) {
     const server = new Server(url, this.#options);
 
-    server.on('close', (socket: Client) => {
-      this.#isClosed.resolve(socket);
-      this.#isClosed = Promise.withResolvers();
-    });
+    server.on('close', this.#isClosed.resolve);
 
     server.on('connection', (socket: Client) => {
       this.#isConnected.resolve(socket);
-      this.#isConnected = Promise.withResolvers();
 
       socket.on('message', (message) => {
-        const parsedMessage = this.#deserializer(message as string);
+        const parsedMessage = this.#deserialize(message as string);
         this.messages.push(parsedMessage);
         this.#messageQueue.push(parsedMessage);
         this.#messageAdded.resolve();

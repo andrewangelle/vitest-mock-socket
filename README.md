@@ -44,6 +44,11 @@ The server can also send messages to all connected clients
 server.send('hello everyone');
 ```
 
+The server will also handle json messages out of the box
+```js
+server.send({ foo: 'bar' })
+```
+
 Simulate an error and close the connection
 ```js
 server.error();
@@ -80,11 +85,12 @@ WebSocketServer.clean();
 
 
 #### Options
-The constructor accepts an optional options object as second argument:
+The constructor accepts an optional options object as second argument.
+
+The options supported by the [mock-socket](https://github.com/thoov/mock-socket) library are directly passed-through to the mock-server's constructor.
 
 ```ts
 type WebSocketServerOptions = {
-  jsonProtocol?: boolean;
   verifyClient?: () => boolean;
   selectProtocol?: (protocols: string[]) => string | null;
 }
@@ -98,16 +104,9 @@ const server = new WebSocketServer(url, options);
   Can be used to automatically serialize and deserialize JSON messages:
 
   ```js
-  const server = new WebSocketServer(
-    url, 
-    { jsonProtocol: true }
-  );
-
+  const server = new WebSocketServer(url);
   server.send({ type: 'GREETING', payload: 'hello' });
   ```
-
-
-The options supported by the [mock-socket](https://github.com/thoov/mock-socket) library are directly passed-through to the mock-server's constructor.
 
 ##### verifyClient
 
@@ -216,6 +215,25 @@ test('the server keeps track of received messages, and yields them as they come 
 });
 ```
 
+```js
+  test('server handles mixed message types', async () => {
+    const server = new WebSocketServer('ws://localhost:1234');
+    const client = new WebSocket('ws://localhost:1234');
+    await server.connected();
+    client.send('hello there');
+    client.send(`{"type":"GREETING","payload":"how are you?"}`);
+    client.send(`{"type":"GREETING","payload":"good?"}`);
+    await server.nextMessage();
+    await server.nextMessage();
+    await server.nextMessage();
+    expect(server).toHaveReceivedMessages([
+      'hello there',
+      { type: 'GREETING', payload: 'how are you?' },
+      { type: 'GREETING', payload: 'good?' },
+    ]);
+  });
+
+
 #### .toHaveResolvedMessages 
 A asynchronous version of `toHaveReceivedMessages`.
 
@@ -262,6 +280,22 @@ test('the server keeps track of received messages, and yields them as they come 
 
   await expect(server).toHaveResolvedMessages(['hello', 'how are you?', 'goodbye']);
 });
+```
+
+```js
+  test('server handles mixed message types', async () => {
+    const server = new WebSocketServer('ws://localhost:1234');
+    const client = new WebSocket('ws://localhost:1234');
+    await server.connected();
+    client.send('hello there');
+    client.send(`{"type":"GREETING","payload":"how are you?"}`);
+    client.send(`{"type":"GREETING","payload":"good?"}`);
+    await expect(server).toHaveResolvedMessages([
+      'hello there',
+      { type: 'GREETING', payload: 'how are you?' },
+      { type: 'GREETING', payload: 'good?' },
+    ]);
+  });
 ```
 
 ## Other examples
