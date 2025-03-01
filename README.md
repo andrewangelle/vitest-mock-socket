@@ -113,7 +113,7 @@ const server = new WebSocketServer(url, options);
     await expect(
       new Promise((resolve, reject) => {
         errorCallback.mockImplementation(reject);
-        const client = new WebSocket('ws://localhost:1234');
+        const client = new WebSocket(url);
         client.onerror = errorCallback;
         client.onopen = resolve;
       })
@@ -160,8 +160,8 @@ An async matcher that waits for the next message received by the the mocked webs
 
 ```js
 test('the server keeps track of received messages, and yields them as they come in', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
 
   await server.connected();
 
@@ -178,13 +178,14 @@ A synchronous matcher that checks that all the expected messages have been recei
 
 ```js
 test('the server keeps track of received messages, and yields them as they come in', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
 
   await server.connected();
 
   client.send('hello');
   client.send('goodbye');
+
   await server.nextMessage();
   await server.nextMessage();
 
@@ -193,28 +194,20 @@ test('the server keeps track of received messages, and yields them as they come 
 ```
 
 ```js
-test('the server keeps track of received messages, and yields them as they come in', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
-
-  await server.connected();
-  client.send('hello');
-  await expect(server).toReceiveMessage('hello');
-  expect(server).toHaveReceivedMessages(['hello']);
-});
-```
-
-```js
 test('server handles mixed message types', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
+  
   await server.connected();
+
   client.send('hello there');
   client.send(`{"type":"GREETING","payload":"how are you?"}`);
   client.send(`{"type":"GREETING","payload":"good?"}`);
+
   await server.nextMessage();
   await server.nextMessage();
   await server.nextMessage();
+
   expect(server).toHaveReceivedMessages([
     'hello there',
     { type: 'GREETING', payload: 'how are you?' },
@@ -223,15 +216,14 @@ test('server handles mixed message types', async () => {
 });
 ```
 
-
 #### .toHaveResolvedMessages 
-A asynchronous version of `toHaveReceivedMessages`.
+A asynchronous version of `toHaveReceivedMessages`. It will automatically resolve the message queue so you do not have to manually call `server.nextMessage`.
 
 Default behavior is to match exactly.
 ```js
 test('the server keeps track of received messages, and yields them as they come in', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
 
   await server.connected();
 
@@ -245,8 +237,8 @@ test('the server keeps track of received messages, and yields them as they come 
 This would fail
 ```js
 test('the server keeps track of received messages, and yields them as they come in.', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
 
   await server.connected();
 
@@ -260,8 +252,8 @@ test('the server keeps track of received messages, and yields them as they come 
 Accepts an options object to allow for partial matches.
 ```js
 test('the server keeps track of received messages, and yields them as they come in.', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
 
   await server.connected();
 
@@ -274,8 +266,8 @@ test('the server keeps track of received messages, and yields them as they come 
 
 ```js
   test('server handles mixed message types', async () => {
-    const server = new WebSocketServer('ws://localhost:1234');
-    const client = new WebSocket('ws://localhost:1234');
+    const server = new WebSocketServer(url);
+    const client = new WebSocket(url);
     await server.connected();
     client.send('hello there');
     client.send(`{"type":"GREETING","payload":"how are you?"}`);
@@ -294,12 +286,12 @@ test('the server keeps track of received messages, and yields them as they come 
 
 ```js
 test('the mock server sends messages to connected clients', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
+  const server = new WebSocketServer(url);
 
-  const client1 = new WebSocket('ws://localhost:1234');
+  const client1 = new WebSocket(url);
   await server.connected();
   
-  const client2 = new WebSocket('ws://localhost:1234');
+  const client2 = new WebSocket(url);
   await server.connected();
 
   const messages = { client1: [], client2: [] };
@@ -323,8 +315,8 @@ test('the mock server sends messages to connected clients', async () => {
 
 ```js
 test('the mock server sends errors to connected clients', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
-  const client = new WebSocket('ws://localhost:1234');
+  const server = new WebSocketServer(url);
+  const client = new WebSocket(url);
   await server.connected();
 
   let disconnected = false;
@@ -348,12 +340,12 @@ test('the mock server sends errors to connected clients', async () => {
 
 ```js
 it('the server can refuse connections', async () => {
-  const server = new WebSocketServer('ws://localhost:1234');
+  const server = new WebSocketServer(url);
   server.on('connection', (socket) => {
     socket.close({ wasClean: false, code: 1003, reason: 'NOPE' });
   });
 
-  const client = new WebSocket('ws://localhost:1234');
+  const client = new WebSocket(url);
   client.onclose = (event: CloseEvent) => {
     expect(event.code).toBe(1003);
     expect(event.wasClean).toBe(false);
@@ -376,8 +368,8 @@ You can set up a mock server and a client, and reset them between tests:
 
 ```js
 beforeEach(async () => {
-  server = new WebSocketServer('ws://localhost:1234');
-  client = new WebSocket('ws://localhost:1234');
+  server = new WebSocketServer(url);
+  client = new WebSocket(url);
   await server.connected();
 });
 
