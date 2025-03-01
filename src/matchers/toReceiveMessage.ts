@@ -1,7 +1,7 @@
 import type { MatcherState } from '@vitest/expect';
 import { diff } from '@vitest/utils/diff';
 
-import type { DeserializedMessage, ReceiveMessageOptions } from '../types';
+import type { DeserializedMessage, MessageMatcherOptions } from '../types';
 import { WebSocketServer } from '../websocket';
 import {
   createFmt,
@@ -15,7 +15,7 @@ export async function toReceiveMessage(
   this: MatcherState,
   received: DeserializedMessage,
   expected: DeserializedMessage,
-  options?: ReceiveMessageOptions,
+  options?: MessageMatcherOptions,
 ) {
   const printCli = createFmt.call(this, 'toReceiveMessage');
 

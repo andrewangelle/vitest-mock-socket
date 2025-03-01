@@ -104,9 +104,7 @@ describe('WebSocketServer', () => {
   });
 
   it('seamlessly handles JSON protocols', async () => {
-    const server = new WebSocketServer(mockUrl, {
-      jsonProtocol: true,
-    });
+    const server = new WebSocketServer(mockUrl);
     const client = new WebSocket(mockUrl);
     await server.connected();
 

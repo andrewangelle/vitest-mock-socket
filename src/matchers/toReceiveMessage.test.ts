@@ -5,9 +5,10 @@ import { WebSocketServer } from '../websocket';
 let server: WebSocketServer;
 let client: WebSocket;
 
+const testURL = 'ws://localhost:1234';
 beforeEach(async () => {
-  server = new WebSocketServer('ws://localhost:1234');
-  client = new WebSocket('ws://localhost:1234');
+  server = new WebSocketServer(testURL);
+  client = new WebSocket(testURL);
   await server.connected();
 });
 
@@ -30,23 +31,13 @@ describe('.toReceiveMessage', () => {
   });
 
   it('passes when the websocket server receives the expected JSON message', async () => {
-    const jsonServer = new WebSocketServer('ws://localhost:9876', {
-      jsonProtocol: true,
-    });
-    const jsonClient = new WebSocket('ws://localhost:9876');
-    await jsonServer.connected();
-    jsonClient.send(`{"answer":42}`);
-    await expect(jsonServer).toReceiveMessage({ answer: 42 });
+    client.send(`{"answer":42}`);
+    await expect(server).toReceiveMessage({ answer: 42 });
   });
 
   it('passes with JSON protocol on, but message is not JSON', async () => {
-    const jsonServer = new WebSocketServer('ws://localhost:9876', {
-      jsonProtocol: true,
-    });
-    const jsonClient = new WebSocket('ws://localhost:9876');
-    await jsonServer.connected();
-    jsonClient.send('not json');
-    await expect(jsonServer).toReceiveMessage('not json');
+    client.send('not json');
+    await expect(server).toReceiveMessage('not json');
   });
 
   it('fails when called with an expected argument that is not a valid WS', async () => {
@@ -78,13 +69,10 @@ describe('.toReceiveMessage', () => {
     ).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  // TODO: Fix Object indentation
-  it('fails when expecting a JSON message but the server is not configured for JSON protocols', async () => {
+  it('passes when expecting a JSON message but the server is not configured for JSON protocols', async () => {
     expect.hasAssertions();
     client.send(`{"answer":42}`);
-    await expect(
-      expect(server).toReceiveMessage({ answer: 42 }),
-    ).rejects.toThrowErrorMatchingSnapshot();
+    expect(server).toReceiveMessage({ answer: 42 });
   });
 });
 
