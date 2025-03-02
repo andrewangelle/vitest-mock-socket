@@ -1,5 +1,21 @@
 # vitest-mock-socket
 
+## 2.0.0
+
+### Major Changes
+
+- 8dbbd0f: Support JSON protocol by default.
+
+  BREAKING-CHANGE:
+
+  - Rename ReceiveMessageOptions type to MessageMatcherOptions
+  - Remove jsonProtocol option.
+
+### Minor Changes
+
+- 5c113ba: Implement toHaveResolvedMessages matcher
+- 4979917: Reset connected and closed promises after resolving
+
 ## 2.0.0-next.2
 
 ### Major Changes
