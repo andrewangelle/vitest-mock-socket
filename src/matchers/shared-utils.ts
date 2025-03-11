@@ -95,23 +95,3 @@ export async function getNextMessageOrTimeout(
     clearTimeout(timer);
   }
 }
-
-export async function resolveAllClientMessages(
-  server: WebSocketServer,
-  options?: MessageMatcherOptions,
-) {
-  const finished = Promise.withResolvers<void>();
-
-  let shouldContinue = true;
-
-  while (shouldContinue) {
-    const msgOrTimeout = await getNextMessageOrTimeout(server, options);
-
-    if (isTimeout(msgOrTimeout)) {
-      shouldContinue = false;
-      finished.resolve();
-    }
-  }
-
-  return finished.promise;
-}

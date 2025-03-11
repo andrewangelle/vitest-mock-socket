@@ -1,15 +1,14 @@
 import type { MatcherState } from '@vitest/expect';
-import { diff } from '@vitest/utils/diff';
 
-import type { DeserializedMessage, MessageMatcherOptions } from '../types';
-import { WebSocketServer } from '../websocket';
+import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
+import { WebSocketServer } from '../../websocket';
 import {
-  createPrintCli,
   getInvalidServerResult,
   getNextMessageOrTimeout,
   getTimedOutResult,
   isTimeout,
-} from './utils';
+} from '../shared-utils';
+import { createToReceiveMessagesOutput } from './utils';
 
 export async function toReceiveMessage(
   this: MatcherState,
@@ -17,8 +16,6 @@ export async function toReceiveMessage(
   expected: DeserializedMessage,
   options?: MessageMatcherOptions,
 ) {
-  const printCli = createPrintCli.call(this, 'toReceiveMessage');
-
   // Validate that a websocket server was passed to expect.
   // i.e. await expect(server).toReceiveMessage(...)
   if (!(received instanceof WebSocketServer)) {
@@ -34,32 +31,11 @@ export async function toReceiveMessage(
 
   // Test and print the results
   const pass = this.equals(result, expected);
-
+  const getMessage = createToReceiveMessagesOutput.bind(this);
   return {
     actual: result,
     expected,
     pass,
-    message: () => {
-      if (pass) {
-        return printCli`
-          Expected the next received message to not equal:
-            ${this.utils.printExpected(expected)}
-
-          Received:
-            ${this.utils.printReceived(result)}
-        `;
-      }
-
-      return printCli`
-        Expected the next received message to equal:
-          ${this.utils.printExpected(expected)}
-
-        Received:
-          ${this.utils.printReceived(result)}
-
-        Difference:
-          ${diff(expected, result, { expand: this.expand }) ?? ''}
-      `;
-    },
+    message: () => getMessage(pass, result, expected),
   };
 }
