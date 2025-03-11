@@ -31,6 +31,20 @@
     "LICENSE.txt",
     "ThirdPartyNotices.txt"
   ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "pnpm lint:fix",
+      "pnpm format"
+    ]
+  },
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "pnpm clean",
@@ -68,19 +82,5 @@
   },
   "peerDependencies": {
     "vitest": ">=2"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "lint-staged": {
-    "*": [
-      "pnpm lint:fix",
-      "pnpm format"
-    ]
-  },
-  "engines": {
-    "node": ">=22.0.0"
   }
 }

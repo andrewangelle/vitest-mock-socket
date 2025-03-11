@@ -6,6 +6,7 @@ import { WebSocketServer } from '../websocket';
 
 let server: WebSocketServer;
 let client: WebSocket;
+
 const testURL = 'ws://localhost:1234';
 
 beforeEach(async () => {
@@ -15,6 +16,7 @@ beforeEach(async () => {
   server.on('message', (msg) => {
     console.log(msg);
   });
+
   await server.connected();
 });
 
@@ -35,25 +37,38 @@ describe('.toHaveResolvedMessages', () => {
   });
 
   it('passes when the websocket server received the expected JSON messages', async () => {
-    client.send(`{"type":"GREETING","payload":"hello there"}`);
-    client.send(`{"type":"GREETING","payload":"how are you?"}`);
-    client.send(`{"type":"GREETING","payload":"good?"}`);
-    await expect(server).toHaveResolvedMessages([
+    const messages = [
       { type: 'GREETING', payload: 'hello there' },
       { type: 'GREETING', payload: 'how are you?' },
       { type: 'GREETING', payload: 'good?' },
-    ]);
+    ];
+
+    for (const message of messages) {
+      client.send(JSON.stringify(message));
+      await server.nextMessage();
+    }
+
+    await expect(server).toHaveResolvedMessages(messages);
   });
 
   it('passes when the websocket server receives mixed message types', async () => {
-    client.send('hello there');
-    client.send(`{"type":"GREETING","payload":"how are you?"}`);
-    client.send(`{"type":"GREETING","payload":"good?"}`);
-    await expect(server).toHaveResolvedMessages([
+    type WSMessageInit = string | ArrayBufferLike | Blob | ArrayBufferView;
+
+    const messages = [
       'hello there',
       { type: 'GREETING', payload: 'how are you?' },
       { type: 'GREETING', payload: 'good?' },
-    ]);
+    ];
+
+    client.send(messages[0] as WSMessageInit);
+    client.send(JSON.stringify(messages[1]));
+    client.send(JSON.stringify(messages[2]));
+
+    for (const _message of messages) {
+      await server.nextMessage();
+    }
+
+    await expect(server).toHaveResolvedMessages(messages);
   });
 
   it('fails when the websocket server did not receive the expected messages', async () => {
