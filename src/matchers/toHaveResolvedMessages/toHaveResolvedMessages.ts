@@ -1,9 +1,9 @@
 import type { MatcherState } from '@vitest/expect';
-import type { DeserializedMessage, MessageMatcherOptions } from '../types';
-import { WebSocketServer } from '../websocket';
+import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
+import { WebSocketServer } from '../../websocket';
+import { getInvalidServerResult } from '../shared-utils';
 import {
-  createPrintCli,
-  getInvalidServerResult,
+  createToHaveResolvedMessagesOutput,
   resolveAllClientMessages,
 } from './utils';
 
@@ -42,30 +42,12 @@ export async function toHaveResolvedMessages(
     pass = this.equals(received.messages, expected);
   }
 
+  const getMessage = createToHaveResolvedMessagesOutput.bind(this);
+
   return {
     actual: received.messages,
     expected,
     pass,
-    message: () => {
-      const printCli = createPrintCli.call(this, 'toHaveResolvedMessages');
-
-      if (this.isNot) {
-        return printCli`
-          Expected the WebSocketServer to not have received the following messages: 
-            ${this.utils.printExpected(expected)}
-          
-          But it received: 
-            ${this.utils.printReceived(received.messages)}
-        `;
-      }
-
-      return printCli`
-        Expected the WebSocketServer to have received all of the following messages: 
-          ${this.utils.printExpected(expected)}
-
-        But it received: 
-          ${this.utils.printReceived(received.messages)}
-      `;
-    },
+    message: () => getMessage(expected, received.messages),
   };
 }

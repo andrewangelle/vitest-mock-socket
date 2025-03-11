@@ -1,8 +1,8 @@
 import { expect } from 'vitest';
 
-import { toHaveReceivedMessages } from './matchers/toHaveReceivedMessages';
-import { toHaveResolvedMessages } from './matchers/toHaveResolvedMessages';
-import { toReceiveMessage } from './matchers/toReceiveMessage';
+import { toHaveReceivedMessages } from './matchers/toHaveReceivedMessages/toHaveReceivedMessages';
+import { toHaveResolvedMessages } from './matchers/toHaveResolvedMessages/toHaveResolvedMessages';
+import { toReceiveMessage } from './matchers/toReceiveMessage/toReceiveMessage';
 import type { DeserializedMessage, MessageMatcherOptions } from './types';
 
 interface CustomMatchers<MatcherResult = unknown> {

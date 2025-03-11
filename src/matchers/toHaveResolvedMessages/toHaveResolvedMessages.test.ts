@@ -1,8 +1,6 @@
-import '../extend-expect';
+import '../../extend-expect';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-
-import { WebSocketServer } from '../websocket';
+import { WebSocketServer } from '../../websocket';
 
 let server: WebSocketServer;
 let client: WebSocket;
