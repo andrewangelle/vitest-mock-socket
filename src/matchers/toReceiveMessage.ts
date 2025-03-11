@@ -4,7 +4,7 @@ import { diff } from '@vitest/utils/diff';
 import type { DeserializedMessage, MessageMatcherOptions } from '../types';
 import { WebSocketServer } from '../websocket';
 import {
-  createFmt,
+  createPrintCli,
   getInvalidServerResult,
   getNextMessageOrTimeout,
   getTimedOutResult,
@@ -17,7 +17,7 @@ export async function toReceiveMessage(
   expected: DeserializedMessage,
   options?: MessageMatcherOptions,
 ) {
-  const printCli = createFmt.call(this, 'toReceiveMessage');
+  const printCli = createPrintCli.call(this, 'toReceiveMessage');
 
   // Validate that a websocket server was passed to expect.
   // i.e. await expect(server).toReceiveMessage(...)

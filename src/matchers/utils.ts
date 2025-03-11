@@ -43,7 +43,7 @@ export function getTimedOutResult(
   };
 }
 
-export function createFmt(this: MatcherState, name: string) {
+export function createPrintCli(this: MatcherState, name: string) {
   const matcherHint = getMatcherHint.call(this, name);
 
   return (templates: TemplateStringsArray, ...values: string[]) => {

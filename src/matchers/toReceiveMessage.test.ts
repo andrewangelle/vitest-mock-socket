@@ -31,8 +31,9 @@ describe('.toReceiveMessage', () => {
   });
 
   it('passes when the websocket server receives the expected JSON message', async () => {
-    client.send(`{"answer":42}`);
-    await expect(server).toReceiveMessage({ answer: 42 });
+    const jsonMsg = { answer: 42 };
+    client.send(JSON.stringify(jsonMsg));
+    await expect(server).toReceiveMessage(jsonMsg);
   });
 
   it('passes with JSON protocol on, but message is not JSON', async () => {
@@ -71,8 +72,9 @@ describe('.toReceiveMessage', () => {
 
   it('passes when expecting a JSON message but the server is not configured for JSON protocols', async () => {
     expect.hasAssertions();
-    client.send(`{"answer":42}`);
-    expect(server).toReceiveMessage({ answer: 42 });
+    const jsonMsg = { answer: 42 };
+    client.send(JSON.stringify(jsonMsg));
+    expect(server).toReceiveMessage(jsonMsg);
   });
 });
 

@@ -1,7 +1,7 @@
 import type { MatcherState } from '@vitest/expect';
 import type { DeserializedMessage } from '../types';
 import { WebSocketServer } from '../websocket';
-import { createFmt, getInvalidServerResult } from './utils';
+import { createPrintCli, getInvalidServerResult } from './utils';
 
 export function toHaveReceivedMessages(
   this: MatcherState,
@@ -34,7 +34,7 @@ export function toHaveReceivedMessages(
     expected,
     pass,
     message: () => {
-      const printCli = createFmt.call(this, 'toHaveReceivedMessages');
+      const printCli = createPrintCli.call(this, 'toHaveReceivedMessages');
 
       if (this.isNot) {
         return printCli`

@@ -2,7 +2,7 @@ import type { MatcherState } from '@vitest/expect';
 import type { DeserializedMessage, MessageMatcherOptions } from '../types';
 import { WebSocketServer } from '../websocket';
 import {
-  createFmt,
+  createPrintCli,
   getInvalidServerResult,
   resolveAllClientMessages,
 } from './utils';
@@ -47,7 +47,7 @@ export async function toHaveResolvedMessages(
     expected,
     pass,
     message: () => {
-      const printCli = createFmt.call(this, 'toHaveResolvedMessages');
+      const printCli = createPrintCli.call(this, 'toHaveResolvedMessages');
 
       if (this.isNot) {
         return printCli`
