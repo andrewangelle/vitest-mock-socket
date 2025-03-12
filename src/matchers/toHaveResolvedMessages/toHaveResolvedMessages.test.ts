@@ -22,14 +22,13 @@ afterEach(() => {
 
 describe('.toHaveResolvedMessages', () => {
   it('passes when the websocket server received the expected messages', async () => {
-    client.send('hello there');
-    client.send('how are you?');
-    client.send('good?');
-    await expect(server).toHaveResolvedMessages([
-      'hello there',
-      'how are you?',
-      'good?',
-    ]);
+    const messages = ['hello there', 'how are you?', 'good?'];
+
+    for (const message of messages) {
+      client.send(message);
+    }
+
+    await expect(server).toHaveResolvedMessages(messages);
   });
 
   it('passes when the websocket server received the expected JSON messages', async () => {
@@ -41,46 +40,47 @@ describe('.toHaveResolvedMessages', () => {
 
     for (const message of messages) {
       client.send(JSON.stringify(message));
-      await server.nextMessage();
     }
 
     await expect(server).toHaveResolvedMessages(messages);
   });
 
   it('passes when the websocket server receives mixed message types', async () => {
-    type WSMessageInit = string | ArrayBufferLike | Blob | ArrayBufferView;
-
-    const messages = [
+    const messages: [string, object, object] = [
       'hello there',
       { type: 'GREETING', payload: 'how are you?' },
       { type: 'GREETING', payload: 'good?' },
     ];
 
-    client.send(messages[0] as WSMessageInit);
-    client.send(JSON.stringify(messages[1]));
-    client.send(JSON.stringify(messages[2]));
-
-    for (const _message of messages) {
-      await server.nextMessage();
+    for (const message of messages) {
+      const msg =
+        typeof message === 'string' ? message : JSON.stringify(message);
+      client.send(msg);
     }
 
     await expect(server).toHaveResolvedMessages(messages);
   });
 
   it('fails when the websocket server did not receive the expected messages', async () => {
-    client.send('hello there');
-    client.send('how are you?');
-    client.send('good?');
+    const messages = ['hello there', 'how are you?', 'good?'];
+
+    for (const message of messages) {
+      client.send(message);
+    }
+
     await expect(
       expect(server).toHaveResolvedMessages(['hello there', "'sup?"]),
     ).rejects.toThrowErrorMatchingSnapshot();
   });
 
   it('allows partial matches', async () => {
-    client.send('hello there');
-    client.send('how are you?');
-    client.send('good?');
-    await expect(server).toHaveResolvedMessages(['hello there'], {
+    const messages = ['hello there', 'how are you?', 'good?'];
+
+    for (const message of messages) {
+      client.send(message);
+    }
+
+    await expect(server).toHaveResolvedMessages([messages[0]], {
       partial: true,
     });
   });
@@ -94,16 +94,22 @@ describe('.toHaveResolvedMessages', () => {
 
 describe('.not.toHaveResolvedMessages', () => {
   it('passes when the websocket server received none of the specified messages', async () => {
-    client.send('hello there');
-    client.send('how are you?');
-    client.send('good?');
+    const messages = ['hello there', 'how are you?', 'good?'];
+
+    for (const message of messages) {
+      client.send(message);
+    }
+
     await expect(server).not.toHaveResolvedMessages(["'sup?", 'U good?']);
   });
 
   it('fails when the websocket server received at least one unexpected message', async () => {
-    client.send('hello there');
-    client.send('how are you?');
-    client.send('good?');
+    const messages = ['hello there', 'how are you?', 'good?'];
+
+    for (const message of messages) {
+      client.send(message);
+    }
+
     await expect(
       expect(server).not.toHaveResolvedMessages([
         "'sup?",

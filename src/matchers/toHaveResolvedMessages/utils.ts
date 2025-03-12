@@ -1,10 +1,9 @@
+import type { MatcherState } from '@vitest/expect/dist';
 import {
   createPrintCli,
   getNextMessageOrTimeout,
   isTimeout,
-} from '../shared-utils';
-
-import type { MatcherState } from '@vitest/expect/dist';
+} from '~/matchers/shared-utils';
 import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
 import type { WebSocketServer } from '~/websocket';
 

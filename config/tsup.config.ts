@@ -9,4 +9,5 @@ export default defineConfig({
   format: 'esm',
   outDir: 'dist',
   plugins: [tsupTsconfigPathsPlugin],
+  minify: true,
 });
