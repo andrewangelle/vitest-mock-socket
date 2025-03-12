@@ -13,7 +13,7 @@ export function toHaveReceivedMessages(
   const getMessage = createToHaveReceivedMessagesOutput.bind(this);
 
   // Validate that a websocket server was passed to expect.
-  // i.e. expect(server).toHaveResolved(...)
+  // i.e. expect(server).toHaveReceivedMessages(...)
   if (!(received instanceof WebSocketServer)) {
     return getInvalidServerResult('toHaveReceivedMessages', received);
   }
