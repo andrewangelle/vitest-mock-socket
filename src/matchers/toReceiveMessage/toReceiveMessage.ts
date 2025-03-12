@@ -13,7 +13,7 @@ import {
 
 export async function toReceiveMessage(
   this: MatcherState,
-  received: DeserializedMessage,
+  received: WebSocketServer,
   expected: DeserializedMessage,
   options?: MessageMatcherOptions,
 ): AsyncExpectationResult {

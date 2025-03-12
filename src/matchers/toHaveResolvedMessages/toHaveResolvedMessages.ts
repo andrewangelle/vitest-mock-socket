@@ -9,7 +9,7 @@ import {
 
 export async function toHaveResolvedMessages(
   this: MatcherState,
-  received: DeserializedMessage[],
+  received: WebSocketServer,
   expected: DeserializedMessage[],
   options?: MessageMatcherOptions,
 ): AsyncExpectationResult {

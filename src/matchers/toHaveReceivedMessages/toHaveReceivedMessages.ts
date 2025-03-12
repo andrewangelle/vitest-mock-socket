@@ -6,7 +6,7 @@ import { createToHaveReceivedMessagesOutput } from './utils';
 
 export function toHaveReceivedMessages(
   this: MatcherState,
-  received: DeserializedMessage[],
+  received: WebSocketServer,
   expected: DeserializedMessage[],
 ): ExpectationResult {
   const getInvalidServerResult = createGetInvalidServerResult.bind(this);
