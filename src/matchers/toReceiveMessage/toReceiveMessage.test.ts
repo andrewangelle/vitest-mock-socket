@@ -1,11 +1,10 @@
-import '../../extend-expect';
-
 import { WebSocketServer } from '../../websocket';
 
 let server: WebSocketServer;
 let client: WebSocket;
 
 const testURL = 'ws://localhost:1234';
+
 beforeEach(async () => {
   server = new WebSocketServer(testURL);
   client = new WebSocket(testURL);

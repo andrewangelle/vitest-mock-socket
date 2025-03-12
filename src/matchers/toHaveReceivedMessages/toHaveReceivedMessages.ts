@@ -1,22 +1,21 @@
-import type { MatcherState } from '@vitest/expect';
+import type { ExpectationResult, MatcherState } from '@vitest/expect';
 import type { DeserializedMessage } from '../../types';
 import { WebSocketServer } from '../../websocket';
-import { getInvalidServerResult } from '../shared-utils';
+import { createGetInvalidServerResult } from '../shared-utils';
 import { createToHaveReceivedMessagesOutput } from './utils';
 
 export function toHaveReceivedMessages(
   this: MatcherState,
   received: DeserializedMessage[],
   expected: DeserializedMessage[],
-) {
+): ExpectationResult {
+  const getInvalidServerResult = createGetInvalidServerResult.bind(this);
+  const getMessage = createToHaveReceivedMessagesOutput.bind(this);
+
   // Validate that a websocket server was passed to expect.
   // i.e. expect(server).toHaveResolved(...)
   if (!(received instanceof WebSocketServer)) {
-    return getInvalidServerResult.call(
-      this,
-      'toHaveReceivedMessages',
-      received,
-    );
+    return getInvalidServerResult('toHaveReceivedMessages', received);
   }
 
   // handles comparison with json objects
@@ -29,8 +28,6 @@ export function toHaveReceivedMessages(
   const pass = this.isNot
     ? equalities.some(Boolean)
     : equalities.every(Boolean);
-
-  const getMessage = createToHaveReceivedMessagesOutput.bind(this);
 
   return {
     actual: received.messages,

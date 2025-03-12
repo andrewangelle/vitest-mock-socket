@@ -1,5 +1,3 @@
-import '../../extend-expect';
-
 import { WebSocketServer } from '../../websocket';
 
 let server: WebSocketServer;
@@ -44,15 +42,13 @@ describe('.toHaveReceivedMessages', () => {
   });
 
   it('passes when the websocket server received mixed message types', async () => {
-    type WSMessageInit = string | ArrayBufferLike | Blob | ArrayBufferView;
-
-    const messages = [
+    const messages: [string, object, object] = [
       'hello there',
       { type: 'GREETING', payload: 'how are you?' },
       { type: 'GREETING', payload: 'good?' },
     ];
 
-    client.send(messages[0] as WSMessageInit);
+    client.send(messages[0]);
     client.send(JSON.stringify(messages[1]));
     client.send(JSON.stringify(messages[2]));
     await server.nextMessage();

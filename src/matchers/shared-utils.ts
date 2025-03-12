@@ -10,7 +10,7 @@ export function getMatcherHint(this: MatcherState, name: string) {
   );
 }
 
-export function getInvalidServerResult(
+export function createGetInvalidServerResult(
   this: MatcherState,
   name: string,
   received: DeserializedMessage | DeserializedMessage[],
@@ -22,22 +22,6 @@ export function getInvalidServerResult(
       const expected =
         'Expected the websocket object to be a valid WebSocketServer mock.\n';
       const receivedMsg = `Received: ${typeof received}\n  ${this.utils.printReceived(received)}`;
-      return `${matcherHint}\n\n${expected}${receivedMsg}`;
-    },
-  };
-}
-
-export function getTimedOutResult(
-  this: MatcherState,
-  options?: MessageMatcherOptions,
-) {
-  const matcherHint = getMatcherHint.call(this, 'toReceiveMessage');
-  const waitDelay = options?.timeout ?? WAIT_DELAY;
-  return {
-    pass: this.isNot, // always fail
-    message: () => {
-      const expected = 'Expected the websocket server to receive a message,\n';
-      const receivedMsg = `but it didn't receive anything in ${waitDelay}ms.`;
       return `${matcherHint}\n\n${expected}${receivedMsg}`;
     },
   };
@@ -67,7 +51,7 @@ export function createPrintCli(this: MatcherState, name: string) {
   };
 }
 
-const WAIT_DELAY = 1000;
+export const WAIT_DELAY = 1000;
 const TIMEOUT = Symbol('timeout');
 
 export function isTimeout(
