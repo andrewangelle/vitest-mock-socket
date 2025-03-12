@@ -1,1 +1,1 @@
-import './extend-expect';
+import '~/extend-expect';

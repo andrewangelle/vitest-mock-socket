@@ -1,4 +1,4 @@
-import { WebSocketServer } from './websocket';
+import { WebSocketServer } from '~/websocket';
 
 const mockUrl = 'ws://localhost:1234';
 

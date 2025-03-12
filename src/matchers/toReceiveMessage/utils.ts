@@ -1,7 +1,11 @@
 import type { MatcherState } from '@vitest/expect/dist';
 import { diff } from '@vitest/utils/diff';
-import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
-import { WAIT_DELAY, createPrintCli, getMatcherHint } from '../shared-utils';
+import {
+  WAIT_DELAY,
+  createPrintCli,
+  getMatcherHint,
+} from '~/matchers/shared-utils';
+import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
 
 export function createGetTimedOutResult(
   this: MatcherState,

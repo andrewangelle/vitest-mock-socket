@@ -1,4 +1,4 @@
-import { WebSocketServer } from '../../websocket';
+import { WebSocketServer } from '~/websocket';
 
 let server: WebSocketServer;
 let client: WebSocket;

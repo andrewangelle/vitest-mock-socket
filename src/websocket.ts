@@ -1,7 +1,7 @@
 import type { Client, CloseOptions } from 'mock-socket';
 import { Server } from 'mock-socket';
 
-import type { DeserializedMessage, WebSocketServerOptions } from './types';
+import type { DeserializedMessage, WebSocketServerOptions } from '~/types';
 
 export class WebSocketServer {
   static clients: WebSocketServer[] = [];
