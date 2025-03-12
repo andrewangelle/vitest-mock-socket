@@ -1,8 +1,23 @@
-import { diff } from '@vitest/utils/diff';
-import { createPrintCli } from '../shared-utils';
-
 import type { MatcherState } from '@vitest/expect/dist';
-import type { DeserializedMessage } from '../../types';
+import { diff } from '@vitest/utils/diff';
+import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
+import { WAIT_DELAY, createPrintCli, getMatcherHint } from '../shared-utils';
+
+export function createGetTimedOutResult(
+  this: MatcherState,
+  options?: MessageMatcherOptions,
+) {
+  const matcherHint = getMatcherHint.call(this, 'toReceiveMessage');
+  const waitDelay = options?.timeout ?? WAIT_DELAY;
+  return {
+    pass: this.isNot, // always fail
+    message: () => {
+      const expected = 'Expected the websocket server to receive a message,\n';
+      const receivedMsg = `but it didn't receive anything in ${waitDelay}ms.`;
+      return `${matcherHint}\n\n${expected}${receivedMsg}`;
+    },
+  };
+}
 
 export function createToReceiveMessagesOutput(
   this: MatcherState,

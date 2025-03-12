@@ -1,5 +1,3 @@
-import '../../extend-expect';
-
 import { WebSocketServer } from '../../websocket';
 
 let server: WebSocketServer;

@@ -1,37 +1,41 @@
-import type { MatcherState } from '@vitest/expect';
-
+import type { AsyncExpectationResult, MatcherState } from '@vitest/expect';
 import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
 import { WebSocketServer } from '../../websocket';
 import {
-  getInvalidServerResult,
+  createGetInvalidServerResult,
   getNextMessageOrTimeout,
-  getTimedOutResult,
   isTimeout,
 } from '../shared-utils';
-import { createToReceiveMessagesOutput } from './utils';
+import {
+  createGetTimedOutResult,
+  createToReceiveMessagesOutput,
+} from './utils';
 
 export async function toReceiveMessage(
   this: MatcherState,
   received: DeserializedMessage,
   expected: DeserializedMessage,
   options?: MessageMatcherOptions,
-) {
+): AsyncExpectationResult {
+  const getInvalidServerResult = createGetInvalidServerResult.bind(this);
+  const getTimedOutResult = createGetTimedOutResult.bind(this);
+  const getMessage = createToReceiveMessagesOutput.bind(this);
+
   // Validate that a websocket server was passed to expect.
   // i.e. await expect(server).toReceiveMessage(...)
   if (!(received instanceof WebSocketServer)) {
-    return getInvalidServerResult.call(this, 'toReceiveMessage', received);
+    return getInvalidServerResult('toReceiveMessage', received);
   }
 
   // Wait for the message or timeout. Fail if we timeout first.
   const result = await getNextMessageOrTimeout(received, options);
 
   if (isTimeout(result)) {
-    return getTimedOutResult.call(this, options);
+    return getTimedOutResult(options);
   }
 
   // Test and print the results
   const pass = this.equals(result, expected);
-  const getMessage = createToReceiveMessagesOutput.bind(this);
   return {
     actual: result,
     expected,
