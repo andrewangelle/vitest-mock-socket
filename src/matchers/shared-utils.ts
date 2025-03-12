@@ -13,7 +13,7 @@ export function getMatcherHint(this: MatcherState, name: string) {
 export function createGetInvalidServerResult(
   this: MatcherState,
   name: string,
-  received: DeserializedMessage | DeserializedMessage[],
+  received: unknown,
 ): ExpectationResult {
   const matcherHint = getMatcherHint.call(this, name);
   return {
