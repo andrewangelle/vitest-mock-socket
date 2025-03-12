@@ -1,8 +1,8 @@
 import type { ExpectationResult, MatcherState } from '@vitest/expect';
-import type { DeserializedMessage } from '../../types';
-import { WebSocketServer } from '../../websocket';
-import { createGetInvalidServerResult } from '../shared-utils';
-import { createToHaveReceivedMessagesOutput } from './utils';
+import { createGetInvalidServerResult } from '~/matchers/shared-utils';
+import { createToHaveReceivedMessagesOutput } from '~/matchers/toHaveReceivedMessages/utils';
+import type { DeserializedMessage } from '~/types';
+import { WebSocketServer } from '~/websocket';
 
 export function toHaveReceivedMessages(
   this: MatcherState,

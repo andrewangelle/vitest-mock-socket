@@ -1,7 +1,6 @@
-import { createPrintCli } from '../shared-utils';
-
 import type { MatcherState } from '@vitest/expect/dist';
-import type { DeserializedMessage } from '../../types';
+import { createPrintCli } from '~/matchers/shared-utils';
+import type { DeserializedMessage } from '~/types';
 
 export function createToHaveReceivedMessagesOutput(
   this: MatcherState,

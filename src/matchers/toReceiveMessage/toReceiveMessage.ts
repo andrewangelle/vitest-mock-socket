@@ -1,15 +1,15 @@
 import type { AsyncExpectationResult, MatcherState } from '@vitest/expect';
-import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
-import { WebSocketServer } from '../../websocket';
 import {
   createGetInvalidServerResult,
   getNextMessageOrTimeout,
   isTimeout,
-} from '../shared-utils';
+} from '~/matchers/shared-utils';
 import {
   createGetTimedOutResult,
   createToReceiveMessagesOutput,
-} from './utils';
+} from '~/matchers/toReceiveMessage/utils';
+import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
+import { WebSocketServer } from '~/websocket';
 
 export async function toReceiveMessage(
   this: MatcherState,

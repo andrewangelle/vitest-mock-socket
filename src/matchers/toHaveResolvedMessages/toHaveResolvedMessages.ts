@@ -1,11 +1,11 @@
 import type { AsyncExpectationResult, MatcherState } from '@vitest/expect';
-import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
-import { WebSocketServer } from '../../websocket';
-import { createGetInvalidServerResult } from '../shared-utils';
+import { createGetInvalidServerResult } from '~/matchers/shared-utils';
 import {
   createToHaveResolvedMessagesOutput,
   resolveAllClientMessages,
-} from './utils';
+} from '~/matchers/toHaveResolvedMessages/utils';
+import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
+import { WebSocketServer } from '~/websocket';
 
 export async function toHaveResolvedMessages(
   this: MatcherState,

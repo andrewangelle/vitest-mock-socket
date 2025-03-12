@@ -1,9 +1,9 @@
-import './with-resolvers-polyfill';
-import './extend-expect';
+import '~/with-resolvers-polyfill';
+import '~/extend-expect';
 
-import { WebSocketServer } from './websocket';
+import { WebSocketServer } from '~/websocket';
 
-export * from './types';
+export * from '~/types';
 
 export default WebSocketServer;
 export { WebSocketServer };

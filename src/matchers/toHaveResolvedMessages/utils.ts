@@ -5,8 +5,8 @@ import {
 } from '../shared-utils';
 
 import type { MatcherState } from '@vitest/expect/dist';
-import type { DeserializedMessage, MessageMatcherOptions } from '../../types';
-import type { WebSocketServer } from '../../websocket';
+import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
+import type { WebSocketServer } from '~/websocket';
 
 export async function resolveAllClientMessages(
   server: WebSocketServer,
