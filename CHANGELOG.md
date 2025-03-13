@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 2.0.1-next.1
+
+### Patch Changes
+
+- bump for prerelease
+
 ## 2.0.1-next.0
 
 ### Patch Changes
