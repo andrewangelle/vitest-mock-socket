@@ -6,3 +6,30 @@ find the full documentation for it [in our repository](https://github.com/change
 
 We have a quick list of common questions to get you started engaging with this project in
 [our documentation](https://github.com/changesets/changesets/blob/main/docs/common-questions.md)
+
+## Prerelease Steps
+
+Add a normal set of changeset
+```sh
+npx @changesets/cli
+```
+
+Enter prerelease mode
+```sh
+npx changeset pre enter next
+```
+
+Version the prerelease with a tag
+```sh
+npx changeset version 
+```
+
+Publish the prerelease
+```sh
+pnpm publish
+```
+
+Push up the tags
+```sh
+git push --follow-tags
+```

@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "vitest-mock-socket": "2.0.0"
+  },
+  "changesets": ["lovely-otters-agree"]
+}
