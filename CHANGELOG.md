@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 2.0.1-next.0
+
+### Patch Changes
+
+- Repo refactor cleanup, Fix type of received arg to matcher fns
+
 ## 2.0.0
 
 ### Major Changes
