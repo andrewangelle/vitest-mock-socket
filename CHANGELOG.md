@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 2.0.1-next.2
+
+### Patch Changes
+
+- c060e7e: Bumping prerelease version
+
 ## 2.0.1-next.1
 
 ### Patch Changes
