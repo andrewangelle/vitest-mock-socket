@@ -1,6 +1,6 @@
 import type { ExpectationResult, MatcherState } from '@vitest/expect/dist';
-import type { DeserializedMessage, MessageMatcherOptions } from '../types';
-import type { WebSocketServer } from '../websocket';
+import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
+import type { WebSocketServer } from '~/websocket';
 
 export function getMatcherHint(this: MatcherState, name: string) {
   return this.utils.matcherHint(
