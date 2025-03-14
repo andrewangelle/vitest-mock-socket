@@ -26,7 +26,7 @@ npx changeset version
 
 Publish the prerelease
 ```sh
-pnpm publish --tag next
+npx changeset publish
 ```
 
 Push up the tags
