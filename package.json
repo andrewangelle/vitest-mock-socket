@@ -1,6 +1,6 @@
 {
   "name": "vitest-mock-socket",
-  "version": "2.0.1-next.1",
+  "version": "2.0.1-next.2",
   "description": "Mock and assert websocket interactions with Vitest",
   "keywords": [
     "vitest",

@@ -4,5 +4,9 @@
   "initialVersions": {
     "vitest-mock-socket": "2.0.0"
   },
-  "changesets": ["lovely-otters-agree", "plain-regions-shine"]
+  "changesets": [
+    "fuzzy-plums-clean",
+    "lovely-otters-agree",
+    "plain-regions-shine"
+  ]
 }
