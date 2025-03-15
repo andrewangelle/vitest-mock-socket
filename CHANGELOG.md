@@ -1,5 +1,13 @@
 # vitest-mock-socket
 
+## 2.0.1
+
+### Patch Changes
+
+- 0dd3615: Bumping prerelease version
+- 6503926: Repo refactor cleanup, Fix type of received arg to matcher fns
+- d608635: bump for prerelease
+
 ## 2.0.1-next.2
 
 ### Patch Changes
