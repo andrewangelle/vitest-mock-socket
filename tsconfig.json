@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "@vitest/expect"],
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": ["esnext", "dom"],
     "strict": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "ignoreDeprecations": "5.0",
     "isolatedModules": true,
     "declaration": true,
     "declarationMap": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
+     "paths": {
       "~/*": ["./src/*"]
     }
   }

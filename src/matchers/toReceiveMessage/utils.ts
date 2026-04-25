@@ -1,4 +1,4 @@
-import type { MatcherState } from '@vitest/expect/dist';
+import type { MatcherState } from '@vitest/expect';
 import { diff } from '@vitest/utils/diff';
 import {
   WAIT_DELAY,

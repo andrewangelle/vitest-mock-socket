@@ -1,4 +1,4 @@
-import type { ExpectationResult, MatcherState } from '@vitest/expect/dist';
+import type { ExpectationResult, MatcherState } from '@vitest/expect';
 import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
 import type { WebSocketServer } from '~/websocket';
 
