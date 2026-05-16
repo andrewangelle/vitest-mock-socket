@@ -5,6 +5,10 @@ let client: WebSocket;
 
 const testURL = 'ws://localhost:1234';
 
+const testMatcherOptions = {
+  timeout: 20,
+}
+
 beforeEach(async () => {
   server = new WebSocketServer(testURL);
   client = new WebSocket(testURL);
@@ -24,9 +28,9 @@ describe('.toReceiveMessage', () => {
   it('passes when the websocket server receives the expected message with custom timeout', async () => {
     setTimeout(() => {
       client.send('hello there');
-    }, 2000);
+    }, 30);
 
-    await expect(server).toReceiveMessage('hello there', { timeout: 3000 });
+    await expect(server).toReceiveMessage('hello there', { timeout: 100 });
   });
 
   it('passes when the websocket server receives the expected JSON message', async () => {
@@ -50,14 +54,14 @@ describe('.toReceiveMessage', () => {
   it('fails when the WS server does not receive the expected message', async () => {
     expect.hasAssertions();
     await expect(
-      expect(server).toReceiveMessage('hello there'),
+      expect(server).toReceiveMessage('hello there', testMatcherOptions),
     ).rejects.toThrowErrorMatchingSnapshot();
   });
 
   it('fails when the WS server does not receive the expected message with custom timeout', async () => {
     expect.hasAssertions();
     await expect(
-      expect(server).toReceiveMessage('hello there', { timeout: 3000 }),
+      expect(server).toReceiveMessage('hello there', { timeout: 100 }),
     ).rejects.toThrowErrorMatchingSnapshot();
   });
 
@@ -93,7 +97,7 @@ describe('.not.toReceiveMessage', () => {
   it("fails when the WS server doesn't receive any messages", async () => {
     expect.hasAssertions();
     await expect(
-      expect(server).not.toReceiveMessage('hello there'),
+      expect(server).not.toReceiveMessage('hello there', testMatcherOptions),
     ).rejects.toThrowErrorMatchingSnapshot();
   });
 
