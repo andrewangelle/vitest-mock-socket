@@ -1,5 +1,11 @@
 # vitest-mock-socket
 
+## 2.1.0-next.0
+
+### Minor Changes
+
+- a022b32: refactor: Update biome. Update vitest to 4. Update typscript. Migrate to tsdown
+
 ## 2.0.1
 
 ### Patch Changes
