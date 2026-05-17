@@ -1,9 +1,9 @@
 import type { MatcherState } from '@vitest/expect';
 import { diff } from '@vitest/utils/diff';
 import {
-  WAIT_DELAY,
   createPrintCli,
   getMatcherHint,
+  WAIT_DELAY,
 } from '~/matchers/shared-utils';
 import type { DeserializedMessage, MessageMatcherOptions } from '~/types';
 

@@ -7,7 +7,7 @@ const testURL = 'ws://localhost:1234';
 
 const testMatcherOptions = {
   timeout: 20,
-}
+};
 
 beforeEach(async () => {
   server = new WebSocketServer(testURL);
@@ -69,7 +69,10 @@ describe('.toHaveResolvedMessages', () => {
     }
 
     await expect(
-      expect(server).toHaveResolvedMessages(['hello there', "'sup?"], testMatcherOptions),
+      expect(server).toHaveResolvedMessages(
+        ['hello there', "'sup?"],
+        testMatcherOptions,
+      ),
     ).rejects.toThrowErrorMatchingSnapshot();
   });
 
@@ -101,7 +104,10 @@ describe('.not.toHaveResolvedMessages', () => {
       client.send(message);
     }
 
-    await expect(server).not.toHaveResolvedMessages(["'sup?", 'U good?'], testMatcherOptions);
+    await expect(server).not.toHaveResolvedMessages(
+      ["'sup?", 'U good?'],
+      testMatcherOptions,
+    );
   });
 
   it('fails when the websocket server received at least one unexpected message', async () => {

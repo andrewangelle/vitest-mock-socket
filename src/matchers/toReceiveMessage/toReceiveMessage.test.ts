@@ -7,7 +7,7 @@ const testURL = 'ws://localhost:1234';
 
 const testMatcherOptions = {
   timeout: 20,
-}
+};
 
 beforeEach(async () => {
   server = new WebSocketServer(testURL);

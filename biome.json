@@ -7,16 +7,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist"]
+    "includes": ["**", "!**/dist"]
   },
   "formatter": {
     "enabled": true,
     "indentWidth": 2,
     "indentStyle": "space"
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -25,13 +23,13 @@
   },
   "overrides": [
     {
-      "include": ["package.json"],
+      "includes": ["**/package.json"],
       "formatter": {
         "enabled": false
       }
     },
     {
-      "include": ["src/with-resolvers-polyfill.ts"],
+      "includes": ["**/src/with-resolvers-polyfill.ts"],
       "linter": {
         "enabled": false
       }
