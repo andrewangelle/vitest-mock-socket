@@ -4,5 +4,7 @@
   "initialVersions": {
     "vitest-mock-socket": "2.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "flat-dodos-enjoy"
+  ]
 }
