@@ -11,25 +11,36 @@ We have a quick list of common questions to get you started engaging with this p
 
 Add a normal set of changeset
 ```sh
-npx @changesets/cli
+pnpm @changesets/cli
 ```
 
 Enter prerelease mode
 ```sh
-npx changeset pre enter next
+pnpm changeset pre enter next
 ```
 
 Version the prerelease with a tag
 ```sh
-npx changeset version 
+pnpm changeset version 
 ```
 
 Publish the prerelease
 ```sh
-npx changeset publish
+pnpm changeset publish
 ```
 
 Push up the tags
 ```sh
 git push --follow-tags
 ```
+
+Before PRing the next branch into main run...
+```sh
+pnpm changeset pre exit
+```
+
+```sh
+pnpm changeset version
+```
+
+Then commit a version commit and PR

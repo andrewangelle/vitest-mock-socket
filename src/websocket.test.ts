@@ -54,7 +54,7 @@ describe('WebSocketServer', () => {
 
     const waitedEnough = Promise.withResolvers<void>();
 
-    setTimeout(async () => {
+    queueMicrotask(async () => {
       await server.nextMessage();
       await server.nextMessage();
       await server.nextMessage();
@@ -67,7 +67,7 @@ describe('WebSocketServer', () => {
       await server.nextMessage();
       await server.nextMessage();
       waitedEnough.resolve();
-    }, 500);
+    });
 
     await waitedEnough.promise;
     expect(server.messages).toEqual('abcdefxyz'.split(''));

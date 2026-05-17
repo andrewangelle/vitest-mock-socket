@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -7,24 +7,34 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist"]
+    "includes": ["**", "!**/dist"]
   },
   "formatter": {
     "enabled": true,
     "indentWidth": 2,
-    "indentStyle": "space",
-    "ignore": ["package.json"]
+    "indentStyle": "space"
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true
-    },
-    "ignore": ["./src/with-resolvers-polyfill.ts"]
+    }
   },
+  "overrides": [
+    {
+      "includes": ["**/package.json"],
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": ["**/src/with-resolvers-polyfill.ts"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

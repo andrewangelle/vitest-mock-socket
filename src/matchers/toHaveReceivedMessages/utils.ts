@@ -1,4 +1,4 @@
-import type { MatcherState } from '@vitest/expect/dist';
+import type { MatcherState } from '@vitest/expect';
 import { createPrintCli } from '~/matchers/shared-utils';
 import type { DeserializedMessage } from '~/types';
 
